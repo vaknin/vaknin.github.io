@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>מחשבון פסיכומטרי</title>
+    <meta name="description" content="הערכת ציון פסיכומטרי על פי שלושה משתנים: עברית אנגלית ומתמטיקה ללא בחירת מועד ספציפי או מספר תשובות נכונות">
+    <link rel="stylesheet" href="../stylesheets/psycho.css">
+</head>
+<body>
+    <main>
+        <div id="calculator">
+            <div id="header">
+                <h1>מחשבון פסיכומטרי</h1>
+            </div>
+
+            <div id="score">
+                <p id="score"></p>
+            </div>
+
+            <div id="inputs">
+                <h3 id="header_math">מתמטיקה</h3>
+                <input class="input" id="input_math" type="text" maxlength="3">
+                <h3 id="header_heb">עברית</h3>
+                <input class="input" id="input_heb" type="text" maxlength="3">
+                <h3 id="header_eng">אנגלית</h3>
+                <input class="input" id="input_eng" type="text" maxlength="3">
+            </div>
+
+        </div>
+    </main>
+    <script src="../scripts/psycho.js"></script>
+</body>
+</html>

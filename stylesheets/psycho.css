@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css?family=Varela+Round');
+
+/*Global*/
+body{
+    font-family: 'Varela Round', sans-serif;
+    background: rgb(178, 182, 174);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/*Calculator*/
+#calculator{
+    border: black solid 2px;
+    border-radius: 25px;
+    margin: 2rem auto;
+    width: 85vw;
+    background: url(../images/psycho-bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 20px 10px 50px rgba(0, 0, 0, 0.3), -20px -10px 50px rgba(0, 0, 0, 0.5);
+}
+
+/*מחשבון פסיכומטרי*/
+#header h1{
+    margin-top:2rem;
+    color: #444;
+    font-size: 8vw;
+    text-align: center;
+}
+
+#score{
+    margin:1rem 0 3rem 0;
+    text-align: center;
+    font-size: 9vw;
+    color: #ffc0b4;
+}
+
+/* Inputs */
+#inputs h3{
+    margin: 0 0 0.2rem 0;
+    font-size: 1.25rem;
+}
+
+#inputs{
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.input{
+    margin-bottom: 3rem;
+    border: none;
+    border-radius: 25px;
+    padding: 0.8rem 1.4rem;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 400;
+    transition: background 1000ms ease;
+}
+
+@media(min-width: 700px){
+    #input_math:hover{
+        background: #ffc4c4;
+    }
+
+    #input_heb:hover{
+        background: #fcffb2;
+    }
+
+    #input_eng:hover{
+        background: #9bacff;
+    }
+
+    #calculator{
+        width: 37vw;
+    }
+
+    #header h1{
+        font-size: 3vw;
+    }
+
+    #score{
+    font-size: 5vw;
+    margin-bottom: 1.5rem;
+    }
+}
+
+#input_math:focus{
+    background: #f26d6d;
+}
+
+#input_heb:focus{
+    background: #f9ff7a;
+}
+
+#input_eng:focus{
+    background: #516ef7;
+}
