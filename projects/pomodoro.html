@@ -4,18 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Let time work for you, not against you. the pomodoro calculator boosts motivation and reduces tiredness.">
     <title>Pomodoro</title>
     <link rel="stylesheet" href="../stylesheets/pomodoro.css">
 </head>
 <body>
     <div id="container">
-        <h3 id="header"></h3>
+        <h1 id="clock"></h1>
+
+        <h2 id="cycles"></h2>
 
         <div id="buttons">
-            <button type="button" class="button" id="startpause"></button>
-            <button type="button" class="button" id="reset"></button>
-            <button type="button" class="button" id="settings"></button>
+            <input id="btn_start" class="button" type="button">
+            <input id="btn_break" class="button" type="button">
+            <input id="btn_speaker" class="button" type="button">
+            <input id="btn_rain" class="button" type="button">
         </div>
+
+        <img id="tomato" src="../images/Pomodoro/tomato.jpg" alt="tomato">
+
     </div>
     <script src="../scripts/pomodoro.js"></script>
 </body>

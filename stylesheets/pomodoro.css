@@ -1,6 +1,113 @@
-body{
-    background: url(https://source.unsplash.com/nM6qrtnVKn8);
-    background-repeat: no-repeat;
-    background-size: cover;
+@import url('https://fonts.googleapis.com/css?family=Amatic+SC');
+
+* {
     margin: 0;
+}
+
+body{
+    background: #fff;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    overflow: hidden;
+}
+
+#clock{
+    position: absolute;
+    right: 33%;
+    font-family: 'Amatic SC', cursive;
+    font-size: 6rem;
+    font-weight: 100;
+}
+
+#cycles{
+    position: absolute;
+    font-family: 'Amatic SC', cursive;
+    font-weight: 100;
+    left: 1.5%;
+}
+
+/*Buttons*/    
+
+#buttons{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    bottom: 2%;
+    left: 2%;
+}
+
+.button{
+    outline: none;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+    width: 5.5rem;
+    height: 5.5rem;
+    margin-bottom: 1rem;
+}
+
+.button:hover{
+    cursor: pointer;
+}
+
+#btn_start{
+    background-image: url(/images/Pomodoro/start.png);
+}
+
+#btn_break{
+    background-image: url(/images/Pomodoro/break_circle.png);
+}
+
+#btn_rain{
+    background-image: url(/images/Pomodoro/rain.png);
+}
+
+#tomato{
+    position: absolute;
+    right: 0;
+    bottom: 2%;
+    z-index: -1;
+}
+
+/*Phones & Tablets*/
+@media(max-width:1023px){
+    
+    #clock{
+        top: 2%;
+        right: 4%;
+        font-size: 5.5rem;
+    }
+
+    #cycles{
+        top: 3.5%;
+        font-size: 3.5rem;
+    }
+
+    #tomato{
+        width: 50%;
+    }
+}
+
+/*Desktops*/
+@media(min-width:1024px){
+
+    #clock{
+        right: 42%;
+        font-size: 7rem;
+    }
+
+    #cycles{
+        top: 17.5%;
+        font-size: 4rem;
+    }
+
+    #tomato{
+        width: 35%;
+    }
 }

@@ -1,187 +1,182 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400');
+@import url('https://fonts.googleapis.com/css?family=Rock+Salt');
+@import url('https://fonts.googleapis.com/css?family=Indie+Flower');
 
 body{
-    font-family: 'Roboto Condensed', sans-serif;
-    margin: 0;
-    background: #eee;
-}
-
-h1{
-    font-weight: 400;
-    font-size: 3rem;
-    margin: 0;
-}
-
-h2{
-    font-weight: 300;
-    margin: 0;
-}
-
-main{
-    max-width: 900px;
-    margin: auto;
-    box-shadow: 50px 0px 50px rgba(0,0,0,0.12), -50px 0px 50px rgba(0,0,0,0.12);
-}
-
-#landing{
-    background: #fff;
-}
-
-#landing-text{
-    display: flex;
-    flex:  0 1 40vw;
-    height: 50vh;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 0 1rem 0 1rem; 
-}
-
-#landing-text h2{
-    color: #888;
-}
-
-.btn{
-    text-decoration: none;
-    border: 1px #888 solid;
-    padding: 0.4rem 1.7rem;
-    color: #222;
-    border-radius: 7px;
-    display: inline-block;
-    font-weight: 300;
-    font-size: 1rem;
-    margin: 2.6rem;
-    margin-bottom: -1.2rem;
-    transition: background 450ms ease;
-}
-
-.btn:hover{
-    background-color: #EEEFFF;
-}
-
-#landing-image{
-    background: url(../images/index-landing.jpg);
-    background-position: center;
-    background-size: cover;
+    background: url(/images/bg.jpg);
     background-repeat: no-repeat;
-    height: 50vh;
-    flex: 0 1 60vw;
+    background-size: cover;
+    margin: 0;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #header{
-    padding: 1.5rem;
-    text-align: center;
-    background: #BABABA;
-    margin-bottom: -1rem;
-}
-.project h3{
-    font-size: 2.5vw;
-    font-weight: 400;
-    color: #333;
+    font-family: 'Rock Salt', cursive;
 }
 
-.project p{
-    font-weight: 300;
-    padding: 0rem 0 1rem 0;
+#projects a{
+    outline: none;
 }
 
-#header h2{
-    font-size: 4vw;
-    font-weight: 600;
-}
-
-#projects{
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-}
-
-.project{
-    text-align: center;
-    border-bottom: dotted 1px #666;
-}
-
-footer{
-    text-align: center;
-    padding: 0.5rem 2rem;
-}
-
-footer h3{
-    font-size: 2.5rem;
-    font-weight: 300;
-    color: #555;
-    margin-bottom: 0;
-}
-
-footer p{
-    font-size: 1rem;
-    font-weight: 400;
-}
-
-#img_psycho{
-    width: 95%;
-}
-
-#project_psycho{
-    order:1;
-}
-
-#project_sampler{
-    order:2;
-}
-
-/* Screen size > 500px */
- @media(min-width: 500px){
-    h1{
-        font-size: 5.6rem;
-        margin-top: -4rem;
+/*Mobile*/
+@media(max-width:799px){
+    * {
+        margin: 0;
     }
 
-    .btn{
-        margin-top: 2rem;
-        padding: 0.75rem 1.8rem;
-     }
-
-     #landing{
-         display: flex;
-         height: 100%;
-     }
-
-     #landing-text, #landing-image{
-         height: 100vh;
-     }
-
-     #landing-text h2{
-        font-size: 1.3em;
-        margin-bottom: 1rem;
-    }
- }
-
- /*Screen > 700px */
- @media(min-width: 700px){
     body{
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
+        overflow: hidden;
     }
 
-     .btn{
-        margin-top: 3rem;
-        padding: 1.2rem 2.2rem;
-     }
+    #container{
+        height: 100vh;
+        text-align: center;
+    }
+    
+    #header_container{
+        display: flex;
+        justify-content: center;
+        height: 100%;
+        align-items: center;
+    }
 
-     h1{
-         font-size: 6rem;
-     }
+    #header{
+        font-weight: 300;
+        font-size: 26vw;
+        color: rgba(0, 0, 0, 0.753);
+    }
+    
+    .wrapper{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.35);
+        border-radius: 15px;
+        width: 75vw;
+        padding: 0 0.5rem;
+    }
 
-     #landing-text h2{
-         font-size: 1.6rem;
-     }
+    .h2{
+        position: absolute;
+        font-family: 'Indie Flower', cursive;
+        margin: auto;
+        text-align: center;
+        color: #000;
+        font-weight: 100;
+        background-color: rgba(255, 255, 255, 0.35);
+        border-radius: 20px;
+        width: 50vw;
+        font-size: 3rem;
+    }
 
-     #img_psycho{
-    width: 45%;
-     }
- }
+    #h2_projects{
+        left: 25%;
+        top: 0;
+    }
+
+    #h2_contact{
+        bottom: 0;
+        left: 31%;
+        width: 40vw;
+
+    }
+    
+    #projects{
+        position: absolute;
+        top: 11%;
+        left: 5%;
+        width: 85vw;
+    }
+    
+    #contact{
+        width: 55vw;
+        position: absolute;
+        bottom: 11%;
+        left: 25%;
+        width: 50vw;
+    }
+    
+    img{
+        width: 65px;
+    }
+    
+    .border{
+        height: 65px;
+        border-right: #EEE solid 1px;
+    }
+}
+
+/*Desktop*/
+@media(min-width:800px){
+    img{
+        width: 8vw;
+    }
+    
+    .wrapper{
+        background-color: rgba(0, 0, 0, 0.35);
+        border-radius: 15px;
+    }
+
+    .border{
+        height: 15vh;
+        border-right: #EEE solid 1px;
+        margin: auto 1vw;
+    }
+
+    #header_container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #header{
+        height: 100vh;
+        font-weight: 300;
+        font-size: 11rem;
+        color: rgba(0, 0, 0, 0.753);
+    }
+
+    .h2{
+        font-family: 'Indie Flower', cursive;
+        margin: auto;
+        text-align: center;
+        color: #000;
+        font-weight: 100;
+        background-color: rgba(255, 255, 255, 0.35);
+        border-radius: 20px;
+        width: 21vw;
+        font-size: 3rem;
+    }
+
+    #projects{
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        margin-bottom: 10vh;
+        width: 42vw;
+    }
+
+    #contact{
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 25vw;
+    }
+
+    #btn_phone{
+        order: 2;
+    }
+
+    #contact_br{
+        order:1;
+    }
+}

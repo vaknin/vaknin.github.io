@@ -5,59 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Kivan</title>
-  <meta name="description" content="Kivan Programming and design">
+  <meta name="description" content="Kivan Programming and Design">
   <link rel="stylesheet" href="stylesheets/index.css">
 </head>
 <body>
-  <main>
-    <!-- Landing area-->
-    <div id="landing">
-      <div id="landing-text">
-        <div id="landing-text-inner">
-          <h1>Kivan</h1>
-          <h2>Programming & Design</h2>
-          <a href="#projects" class="btn" id="view-projects">View Projects</a>
-          <a href="#contact" class="btn" id="btn-contact">Contact</a>
-        </div>
-      </div>
-      <div id="landing-image">
-      </div>
+  <div id="container">
+
+    <div id="header_container">
+        <h1 id="header">Kivan</h1>
     </div>
-    <div id="projects">
-      <div id="header">
-        <h2>Projects</h2>
+
+      <h2 id="h2_projects" class="h2">Projects</h2>
+      <div id="projects" class="wrapper">
+          <a id="btn_chat" href="https://kivanchat.herokuapp.com"><img id="img_chat" src="/images/chat.png" alt="Chat"></a>
+          <div class="border"></div>
+          <a id="btn_pomodoro" href="/projects/pomodoro.html"><img id="img_pomodoro" src="/images/pomodoro.png" alt="Pomodoro"></a>
+          <div class="border"></div>
+          <a id="btn_psycho" href="/projects/psycho.html"><img id="img_psycho" src="/images/psycho.png" alt="Psycho"></a>
+          <div class="border"></div>
+          <a id="btn_sampler" href="https://play.google.com/store/apps/details?id=com.Kivan.TinySampler"><img id="img_sampler" src="/images/sampler.png" alt="Tiny Sampler"></a>
+          <div class="border"></div>
+          <a id="btn_algebro" href="/projects/algebro.html"><img id="img_algebro" src="/images/algebro.png" alt="Algebro"></a>
       </div>
 
-      <div class="project" id="project_sampler">
-        <h3>Tiny Sampler</h3>
-        <p>Tiny sampler is an android application that helps you create music</p>
-        <a target="_blank" href="https://play.google.com/store/apps/details?id=com.Kivan.TinySampler"><img id="img_sampler" src="images/TinySampler.png"></a>
+      <h2 id="h2_contact" class="h2">Contact</h2>
+      <div id="contact" class="wrapper">
+          <a id="btn_phone" href="tel:0584455996"><img id="img_phone" src="/images/phone.png" alt="Phone"></a>
+          <div id="contact_br" class="border"></div>
+          <a id="btn_email" href="mailto:vaknins33@gmail.com"><img id="img_email" src="/images/email.png" alt="E-mail"></a>
       </div>
 
-      <div class="project" id="project_psycho">
-        <h3>Psychometric Calculator</h3>
-        <p>A web app that calculates your psychometric score</p>
-        <a target="_blank" href="projects/psycho.html"><img id="img_psycho" src="images/psycho.png"></a>
-      </div>
-
-    </div>
-  </main>
-
-  <footer id="contact">
-    <h3>Get in Touch</h3>
-    <p>E-mail:
-      <strong>vaknins33@gmail.com</strong>
-    </p>
-    <p>Phone:
-        <strong>058 4455 996</strong>
-    </p> 
-  </footer>
-
-  <script
-			  src="http://code.jquery.com/jquery-3.3.1.min.js"
-			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous">
-  </script>
+  </div>
   <script src="scripts/index.js"></script>
 </body>
 </html>
