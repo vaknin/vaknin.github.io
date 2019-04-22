@@ -23,17 +23,21 @@ let img_psycho = document.getElementById("image_psycho");
 let img_pomodoro = document.getElementById("image_pomodoro");
 let img_algebro = document.getElementById("image_algebro");
 let img_chat = document.getElementById("image_chat");
+let img_chess = document.getElementById("image_chess");
+let img_turret = document.getElementById("image_turret");
 
 //Make an array of buttons that includes the element object and it's id
 let btn_sampler = new Button(document.getElementById("img_sampler"), false);
 let btn_psycho = new Button(document.getElementById("img_psycho"), false);
 let btn_pomodoro = new Button(document.getElementById("img_pomodoro"), false);
 let btn_algebro = new Button(document.getElementById("img_algebro"), false);
+let btn_chess = new Button(document.getElementById("img_chess"), false);
+let btn_turret = new Button(document.getElementById("img_turret"), false);
 let btn_chat = new Button(document.getElementById("img_chat"), false);
 let btn_phone = new Button(document.getElementById("img_phone"), false);
 let btn_email = new Button(document.getElementById("img_email"), false);
 
-let btns = [btn_sampler, btn_psycho, btn_chat, btn_pomodoro, btn_algebro, btn_phone, btn_email];
+let btns = [btn_sampler, btn_psycho, btn_chat, btn_pomodoro, btn_algebro, btn_chess, btn_turret, btn_phone, btn_email];
 
 //Dark/Light themes
 let darkTheme = false;
@@ -102,15 +106,19 @@ function initializeBtnsPC(){
 
 //Mobile buttons will change to their hover image and back every fixed amount of time
 async function initializeBtnsMobile(){
-    for(let i = 0; i < btns.length; i++){
-        setInterval(async function(){
-            toggleHoverImage(btns[i]);
-            await sleep(550);
-            toggleHoverImage(btns[i]);
-        }
-        , 3500);
-        await sleep(500 * (i-850));
+    btns.forEach(b => {
+        prepareButton(b);
+    });
+}
+
+async function prepareButton(b){
+    setInterval(async function(){
+        toggleHoverImage(b);
+        await sleep(700);
+        toggleHoverImage(b);
     }
+    , 1400);
+    await sleep(250);
 }
 
 function initialize(){

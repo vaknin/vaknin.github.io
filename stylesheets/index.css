@@ -57,7 +57,6 @@ body{
         justify-content: center;
         background-color: rgba(0, 0, 0, 0.35);
         border-radius: 15px;
-        width: 75vw;
         padding: 0 0.5rem;
     }
 
@@ -102,7 +101,7 @@ body{
     }
     
     img{
-        width: 65px;
+        width: 47.5px;
     }
     
     .border{
@@ -160,7 +159,7 @@ body{
         justify-content: center;
         text-align: center;
         margin-bottom: 10vh;
-        width: 42vw;
+        width: 75vw;
     }
 
     #contact{
