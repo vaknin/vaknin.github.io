@@ -39,11 +39,17 @@ let btn_email = new Button(document.getElementById("img_email"), false);
 
 let btns = [btn_sampler, btn_psycho, btn_chat, btn_pomodoro, btn_algebro, btn_chess, btn_turret, btn_phone, btn_email];
 
+//Animate each buttons
+btns.forEach(b => {
+    prepareButton(b);
+});
+
 //Dark/Light themes
 let darkTheme = false;
 let wrappers = document.getElementsByClassName('wrapper');
 let borders = document.getElementsByClassName('border');
 let header = document.getElementById('header');
+
 //Header onClick causes theme toggle
 header.onclick = toggleTheme;
 
@@ -55,24 +61,6 @@ let mobile = new Boolean;
 //#endregion
 
 //#region Initialize buttons for mobile/desktop
-
-//Detect the user's platform(Desktop/Mobile)
-function detectPlatform(){
-
-    //Get screen width
-    function getWidth() {
-        return Math.max(
-          document.body.scrollWidth,
-          document.documentElement.scrollWidth,
-          document.body.offsetWidth,
-          document.documentElement.offsetWidth,
-          document.documentElement.clientWidth
-        );
-      }
-    if (getWidth() < 1024) mobile = true;
-
-    else mobile = false;
-}
 
 //Transforms image to hover version and hover version to regular version
 function toggleHoverImage(btn){
@@ -91,26 +79,6 @@ function toggleHoverImage(btn){
     btn.hover = !btn.hover;
 }
 
-//Desktop buttons will change to their hover image upon hovering
-function initializeBtnsPC(){
-    //for(b of btns){
-    for(let i = 0; i < btns.length; i++){
-        btns[i].element.onmouseenter = function(){
-            toggleHoverImage(btns[i]);
-        };
-        btns[i].element.onmouseleave = function(){
-            toggleHoverImage(btns[i]);
-        };
-    }
-}
-
-//Mobile buttons will change to their hover image and back every fixed amount of time
-async function initializeBtnsMobile(){
-    btns.forEach(b => {
-        prepareButton(b);
-    });
-}
-
 async function prepareButton(b){
     setInterval(async function(){
         toggleHoverImage(b);
@@ -120,18 +88,6 @@ async function prepareButton(b){
     , 1400);
     await sleep(250);
 }
-
-function initialize(){
-    detectPlatform();
-    if (mobile){
-        initializeBtnsMobile();
-    }
-
-    else{
-        initializeBtnsPC();
-    }
-}
-
 
 //#endregion
 
