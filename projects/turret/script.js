@@ -246,7 +246,7 @@ class Turret{
         objects.push(p);
 
         //Turret fire sound
-        let a = new Audio('/Sounds/M1.wav');
+        let a = new Audio('./Sounds/M1.wav');
         a.volume = 0.35;
         a.play();
     }
