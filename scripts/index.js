@@ -60,9 +60,7 @@ let mobile = new Boolean;
 
 //#endregion
 
-//#region Initialize buttons for mobile/desktop
-
-//Transforms image to hover version and hover version to regular version
+//#region Button animations
 function toggleHoverImage(btn){
 
     //Button is in hover state - change to regular image
@@ -127,8 +125,4 @@ function toggleTheme(){
     darkTheme = !darkTheme;
 }
 
-//#endregion
-
-//#region Main method
-initialize();
 //#endregion
