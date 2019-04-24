@@ -113,17 +113,17 @@ function animateButton(btn, animationLength, delay){
 	if (btn == btn_break){
 		//Regular version of the image
 		if (!inBreak){
-			img = `url(/../images/Pomodoro/${btn.id.slice(4)}${currentImage}.png)`;
+			img = `url(/../images/pomodoro/${btn.id.slice(4)}${currentImage}.png)`;
 		}
 
 		//Break version of the image
 		else{
-			img = `url(/../images/Pomodoro/${btn.id.slice(4)}${currentImage}_break.png)`;
+			img = `url(/../images/pomodoro/${btn.id.slice(4)}${currentImage}_break.png)`;
 		}
 	}
 
 	else{
-		img = `url(/../images/Pomodoro/${btn.id.slice(4)}${currentImage}.png)`;
+		img = `url(/../images/pomodoro/${btn.id.slice(4)}${currentImage}.png)`;
 	}
 		
 		btn.style.backgroundImage = img;
@@ -182,7 +182,7 @@ function disableSleep(){
 function startBtnOnClick(){
 	//Pause
 	if (inSession){
-		btn_start.style.backgroundImage = `url(/../images/Pomodoro/start.png)`;
+		btn_start.style.backgroundImage = `url(/../images/pomodoro/start.png)`;
 		clearInterval(interval);
 	}
 
@@ -192,7 +192,7 @@ function startBtnOnClick(){
 		if (!breakInitialized)
 			initializeBreakButton();
 
-		btn_start.style.backgroundImage = `url(/../images/Pomodoro/pause.png)`;
+		btn_start.style.backgroundImage = `url(/../images/pomodoro/pause.png)`;
 		pomodoro.startTicking(pomodoro);
 	}
 
@@ -226,15 +226,15 @@ async function muteAlarmOnBreakClick(){
 
 function takeBreak(){
 	//Start button
-	btn_start.style.backgroundImage = `url(/../images/Pomodoro/start_circle.png)`;
+	btn_start.style.backgroundImage = `url(/../images/pomodoro/start_circle.png)`;
 	btn_start.onclick = undefined;
 	inSession = false;
 
 	//Break button
-	btn_break.style.backgroundImage = `url(/../images/Pomodoro/break1_break.png)`;
+	btn_break.style.backgroundImage = `url(/../images/pomodoro/break1_break.png)`;
 
 	//Tomato
-	tomato.src = '../images/Pomodoro/tomato_break.jpg';
+	tomato.src = '../images/pomodoro/tomato_break.jpg';
 
 	//Take a big break every 4 cycles
 	if ((pomodoro.cycle + 1)% 4 == 0){
@@ -261,14 +261,14 @@ function takeBreak(){
 function endBreak(){
 	//Start button
 	inSession = true;
-	btn_start.style.backgroundImage = `url(/../images/Pomodoro/pause.png)`;
+	btn_start.style.backgroundImage = `url(/../images/pomodoro/pause.png)`;
 	btn_start.onclick = startBtnOnClick;
 
 	//Break button
-	btn_break.style.backgroundImage = `url(/../images/Pomodoro/break1.png)`;
+	btn_break.style.backgroundImage = `url(/../images/pomodoro/break1.png)`;
 
 	//Tomato
-	tomato.src = '../images/Pomodoro/tomato.jpg';
+	tomato.src = '../images/pomodoro/tomato.jpg';
 
 	pomodoro.minutes = pomodoro.fixedMinutes;
 	pomodoro.seconds = pomodoro.fixedSeconds;
@@ -280,7 +280,7 @@ function endBreak(){
 function initializeBreakButton(){
 	breakInitialized = true;
 	btn_break.onclick = breakBtnOnClick;
-	btn_break.style.backgroundImage = `url(/../images/Pomodoro/break1.png)`;
+	btn_break.style.backgroundImage = `url(/../images/pomodoro/break1.png)`;
 	animateButton(btn_break, 2, 750);
 }
 
@@ -292,13 +292,13 @@ function speakerBtnOnClick(){
 	//Mute audio
 	if (!audioMuted){
 		clearInterval(speakerInterval);
-		btn_speaker.style.backgroundImage = `url(/../images/Pomodoro/speaker_mute.png)`;
+		btn_speaker.style.backgroundImage = `url(/../images/pomodoro/speaker_mute.png)`;
 		alarm.volume = 0;
 	}
 
 	//Unmute audio
 	else{
-		btn_speaker.style.backgroundImage = `url(/../images/Pomodoro/speaker1.png)`;
+		btn_speaker.style.backgroundImage = `url(/../images/pomodoro/speaker1.png)`;
 		animateButton(btn_speaker, 2, 1000, speakerInterval);
 		alarm.volume = 1;
 	}
@@ -317,12 +317,12 @@ function rainBtnOnClick(){
 
 	//Start playing rain sounds
 	if (!raining){
-		btn_rain.style.backgroundImage = 'url(../images/Pomodoro/rain_break.png';
+		btn_rain.style.backgroundImage = 'url(../images/pomodoro/rain_break.png';
 		rain.play();
 	}
 
 	else{
-		btn_rain.style.backgroundImage = 'url(../images/Pomodoro/rain.png';
+		btn_rain.style.backgroundImage = 'url(../images/pomodoro/rain.png';
 		rain.pause();
 	}
 

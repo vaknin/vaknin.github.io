@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css?family=Indie+Flower');
 
 body{
-    background: url(/images/bg.jpg);
+    background: url(/images/index/bg.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     margin: 0;
@@ -129,15 +129,14 @@ body{
 
     #header_container{
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
     }
 
     #header{
-        height: 100vh;
-        font-weight: 300;
-        font-size: 11rem;
-        color: rgba(0, 0, 0, 0.753);
+        height: 20vh;
+        font-size: 3rem;
+        color: rgba(2, 2, 2, 0.85);
     }
 
     .h2{
