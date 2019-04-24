@@ -70,7 +70,6 @@ function toggleHoverImage(btn){
 
     //Button is not in hover state - change to hover image
     else{
-        
         btn.element.setAttribute("src", `../images/index/${btn.element.id.slice(4)}_hover.png`);
     }
 
