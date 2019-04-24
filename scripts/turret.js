@@ -336,9 +336,22 @@ class Enemy{
         this.dy = this.normalizedY * this.speed * -1;
     }
 
-    die(){
+    async die(){
         objects.splice(objects.indexOf(this), 1);
         enemies.splice(enemies.indexOf(this), 1);
+
+        if (this.contains != undefined){
+            for (let i = 0; i < this.contains; i++){
+                let e = new Enemy();
+                e.x = this.x;
+                e.y = this.y;
+                e.checkpoint = this.checkpoint;
+                addAttributes(e, 'small');
+                objects.push(e);
+                enemies.push(e);
+                await sleep(500);
+            }
+        }
 
         if (enemies.length == 0 && clearedWave){
             count = 0;
@@ -938,7 +951,7 @@ function addAttributes(e, type){
         e.speed = 3;
         e.reward = 10;
         e.color = 'black';
-        e.r = 12.5;
+        e.r = 12.5;        
         break;
 
         //Small enemies
@@ -953,19 +966,21 @@ function addAttributes(e, type){
         //Big enemies
         case 'big':
         e.hp = 5;
-        e.speed = 0.5;
+        e.speed = 0.9;
         e.reward = 25;
         e.color = 'green';
         e.r = 20;
+        e.contains = 3;
         break;
 
         //Huge enemies
         case 'huge':
         e.hp = 10;
-        e.speed = 1;
+        e.speed = 0.5;
         e.reward = 50;
         e.color = 'blue';
         e.r = 35;
+        e.contains = 10;
         break;
     }
 
@@ -1123,7 +1138,8 @@ function nextWave(){
         }
 
         //Big enemies
-        else if (type > 0.75 && type <= 0.9){
+        //else if (type > 0.75 && type <= 0.9){
+        if (true){
             type = 'big';
         }
 
@@ -1161,6 +1177,14 @@ function rand(n1, n2){
     let max = Math.max(n1, n2);
     let min = Math.min(n1, n2);
     return Math.round(Math.random() * (max - min) + min);
+}
+
+function sleep(ms){
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve();
+        }, ms);
+    });
 }
 
 //#endregion
