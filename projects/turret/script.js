@@ -372,7 +372,7 @@ class Projectile{
             this.selfDestruct();
         },2000);
         this.particles = 6;
-        this.particleSpeedModifier = 6;
+        this.particleSpeedModifier = 3.5;
     }
 
     draw(){
@@ -672,23 +672,11 @@ canvas.addEventListener('mousemove', e => {
 
     if (hoveredTurret && hoveredTurret.held){
 
-        for (let i = 0; i < checkpoints.length; i++){
+        for (let i = 0; i < checkpoints.length - 1; i++){
 
             let cp = checkpoints[i];
-            let angle = checkpoints[i].angle;
-
-            //Angle is 180
-            if (angle == 180){
-
-                let cond1 = (mouseX >= cp.x && mouseX <= cp.x + cp.w) && (mouseY >= cp.y - cp.h && mouseY <= cp.y);
-                let cond2 = (mouseX >= cp.x && mouseX <= cp.x + cp.w) && (mouseY >= cp.y && mouseY <= cp.y + cp.h);
-
-                //Check if the mouse is hovering the checkpoint
-                if (cond1 || cond2){
-                    hoveredTurret.taken = true;
-                    break;
-                }
-            }
+            let ncp = checkpoints[i+1];
+            //if ()//todo lel
         }
     }
 
@@ -714,10 +702,13 @@ document.addEventListener('keypress', e => {
 });
 
 //Get the angle between two points
-function getAngle(x1,y1, x2,y2){
+function getAngle(x1,y1, x2,y2, state){
     let opposite = (y2-y1);
     let adjacent = (x2-x1);
     let angle = parseInt((Math.atan2(opposite, adjacent) * 180 / Math.PI).toFixed(0)) + 180;
+    if (state){
+        angle = parseInt((Math.atan2(opposite, adjacent) * 180 / Math.PI).toFixed(0));
+    }
     return angle;
 }
 
@@ -731,7 +722,8 @@ function draw(){
     ctx.fillRect(0,0, canvas.width, canvas.height);
 
     //Draw map
-    drawCheckpoints();
+    //drawCheckpoints();
+    drawMap();
 
     //Draw objects
     objects.forEach(obj => {
@@ -749,7 +741,7 @@ function draw(){
 
 //Main method
 function start(){
-    populateCheckpointsArray();
+    createCheckpoints();
     createButtons('shop');
     draw();
 }
@@ -973,7 +965,7 @@ function addAttributes(e, type){
     e.updateAttributes();
 }
 
-//Create the enemies route dynamically
+/*//Create the enemies route dynamically
 function populateCheckpointsArray(){
 
     //The number of checkpoints to generate (Between 5 and 15, chosen randomly)
@@ -985,7 +977,7 @@ function populateCheckpointsArray(){
     let x, y;
     let lastX, lastY;
     let angle;
-    let rectHeight = 0.03 * canvas.width;
+    let rectHeight = 0.001 * canvas.width;
     
     for (let i = 0; i < numberOfCheckpoints; i++){
 
@@ -998,6 +990,7 @@ function populateCheckpointsArray(){
             continue;
         }
 
+        //Set the 2nd checkpoint as it will create a straight line with the first checkpoint
         else if (i == 1){
             lastX = checkpoints[i - 1].x;
             lastY = checkpoints[i - 1].y;
@@ -1030,7 +1023,18 @@ function populateCheckpointsArray(){
             lastY = checkpoints[i - 1].y;
 
             x = lastX + margin;
-            y = Math.random() * (canvas.height*0.75 - canvas.height*0.25) + canvas.height*0.25;
+
+            let count = 0;
+            while (true){
+                count++;
+                y = Math.random() * (canvas.height*0.75 - canvas.height*0.25) + canvas.height*0.25;
+                let angle = getAngle(x, y, lastX, lastY);
+                if (angle % 45 == 0 || count == 1000){
+                    console.log(count);
+                    
+                    break;
+                }
+            }
         }
 
         //Add the checkpoint to the checkpoints array
@@ -1051,12 +1055,12 @@ function populateCheckpointsArray(){
         if (i != checkpoints.length - 1){
             nextX = checkpoints[i + 1].x;
             nextY = checkpoints[i + 1].y;
-            let angle = getAngle(x,y, nextX, nextY);
+            let angle = getAngle(x,y, nextX, nextY, true);
             let d = Math.sqrt((x - nextX)*(x - nextX) + (y - nextY)*(y - nextY));
-            rectWidth = d * 1.5;
             checkpoints[i].angle = angle;
-            checkpoints[i].w = rectWidth;
+            checkpoints[i].w = d;
             checkpoints[i].h = rectHeight;
+            //console.log(`angle: ${angle}, h: ${checkpoints[i].h * 2} w: ${checkpoints[i].w}, x1: ${x} y1: ${y} x2: ${nextX} y2: ${nextY}`);
         }
     }
 }
@@ -1077,33 +1081,130 @@ function drawCheckpoints(){
 
         //Next X & Y
         if (i != checkpoints.length - 1){
-            for (let j = 0; j < 2; j++){
+            nextX = checkpoints[i + 1].x;
+            nextY = checkpoints[i + 1].y;
+            let angle = getAngle(x,y, nextX, nextY);
+            let d = Math.sqrt((x - nextX)*(x - nextX) + (y - nextY)*(y - nextY));
 
-                nextX = checkpoints[i + 1].x;
-                nextY = checkpoints[i + 1].y;
-                let angle = getAngle(x,y, nextX, nextY);
-                let d = Math.sqrt((x - nextX)*(x - nextX) + (y - nextY)*(y - nextY));
+            rectWidth = d * 1.5;
+            ctx.beginPath();
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate((angle - 180) * Math.PI/180);
+            ctx.translate(x*-1, y*-1);
 
-                //Draw a second time
-                if (j==1){
-                    y -= rectHeight;
-                }
+            ctx.fillStyle = 'lightblue';
+            ctx.fillRect(x, y, rectWidth, rectHeight);
+            ctx.closePath();
+            ctx.restore();
+        }
+    }
+}*/
 
-                rectWidth = d * 1.5;
-                ctx.beginPath();
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.rotate((angle - 180) * Math.PI/180);
-                ctx.translate(x*-1, y*-1);
+function createCheckpoints(){
 
 
+    let numberOfCheckpoints = 26; // must be even
+    let x, y;
+    const border1 = canvas.width * 0.1;
+    const border2 = canvas.width * 0.9;
+    const margin = (canvas.width - border1 * 2) / ((numberOfCheckpoints - 4) / 2);
 
-                ctx.fillStyle = 'lightblue';
-                ctx.fillRect(x, y, rectWidth, rectHeight);
-                ctx.closePath();
-                ctx.restore();
+    for (let i = 0; i < numberOfCheckpoints; i++){
+
+        //First and last checkpoints
+        if (i == 0 || i == numberOfCheckpoints - 1){
+            y = canvas.height / 2;
+            
+            if (i == 0){
+                x = 0;
+            }
+
+            else{
+                x = canvas.width;
             }
         }
+
+        //Second and one before last checkpoint
+        else if (i == 1 || i == numberOfCheckpoints - 2){
+
+            y = canvas.height / 2;
+            if (i == 1){
+                x = border1;
+            }
+
+            else{
+                x = border2;
+            }
+        }
+
+        //Rest of the checkpoints
+        else{
+            let lastX = checkpoints[i-1].x;
+            let lastY = checkpoints[i-1].y;
+            let lastAngle = getAngle(lastX, lastY, checkpoints[i-2].x, checkpoints[i-2].y);
+            let count = 0;
+            
+            //last angle was a straight line
+            if (lastAngle % 180 == 0){
+                while(count < 10000){
+                    count++;
+
+                    x = lastX;
+                    while (true){
+                        y = rand(canvas.height*0.1, canvas.height*0.9);
+                        if (Math.abs(y - lastY) > canvas.height * 0.1){
+                            break;
+                        }
+
+                    }
+                    let angle = getAngle(x,y,lastX,lastY);
+                    
+                    if (angle == 270 || angle == 90){
+                        break;
+                    }
+                }
+            }
+            
+            //Last angle was perpendicular
+            else if (lastAngle == 270 || lastAngle == 90){
+                while(count < 10000){
+                    count++;
+
+                    if (i == numberOfCheckpoints - 3){
+                        x = border2;
+                    }
+
+                    else{
+                        x = lastX + margin;
+                    }
+                    y = rand(canvas.height*0.1, canvas.height*0.9);
+                    let angle = getAngle(x,y,lastX,lastY);
+                    if (angle % 180 == 0){
+                        break;
+                    }
+                }
+            }
+        }
+
+        let p = new Point(x, y);
+        checkpoints.push(p);
+    }
+}
+
+function drawMap(){
+    for (let i = 0; i < checkpoints.length; i++){
+        if (i == checkpoints.length - 1){
+            return;
+        }
+        let cp = checkpoints[i];
+        let ncp = checkpoints[i+1];
+        ctx.beginPath();
+        ctx.moveTo(cp.x, cp.y);
+        ctx.lineTo(ncp.x, ncp.y);
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+        ctx.closePath();
     }
 }
 
@@ -1175,12 +1276,20 @@ function nextWave(){
     }, spawnRate);
 }
 
+//Generate a random rgb color
 function randomColor(){
     let c1 = Math.round(Math.random() * 255);
     let c2 = Math.round(Math.random() * 255);
     let c3 = Math.round(Math.random() * 255);
 
     return `rgb(${c1},${c2},${c3})`;
+}
+
+//Generate a random number between two numbers(inclusive)
+function rand(n1, n2){
+    let max = Math.max(n1, n2);
+    let min = Math.min(n1, n2);
+    return Math.round(Math.random() * (max - min) + min);
 }
 
 //#endregion
