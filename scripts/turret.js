@@ -862,7 +862,7 @@ function createButtons(state){
         currentButtons = 'shop';
 
         //Purchase turret button
-        let b = new Button(buttonsX, buttonsYmargin * (buttons.length + 2), './images/buttons/btn_turret.png', purchaseTurret, turretPrice);
+        let b = new Button(buttonsX, buttonsYmargin * (buttons.length + 2), '../images/turret/btn_turret.png', purchaseTurret, turretPrice);
         addButton(b);
         break;
 
@@ -879,7 +879,7 @@ function createButtons(state){
             
             //Get the price accoarding to the turret's level
             price1 = fetchPrice(level1);
-            let b1 = new Button(buttonsX, buttonsYmargin * (buttons.length + 2), `./images/buttons/btn_firerate${level1}.png`, () => {upgradeFireRate(price1)}, price1);
+            let b1 = new Button(buttonsX, buttonsYmargin * (buttons.length + 2), `../images/turret/btn_firerate${level1}.png`, () => {upgradeFireRate(price1)}, price1);
             
             addButton(b1);
         }
@@ -890,7 +890,7 @@ function createButtons(state){
 
             //Get the price accoarding to the turret's level
             price2 = fetchPrice(level2);
-            let b2 = new Button(buttonsX, buttonsYmargin * (buttons.length + 2), `./images/buttons/btn_damage${level2}.png`, () => {upgradeDamage(price2)}, price2);
+            let b2 = new Button(buttonsX, buttonsYmargin * (buttons.length + 2), `../images/turret/btn_damage${level2}.png`, () => {upgradeDamage(price2)}, price2);
             addButton(b2);
         }
 
@@ -900,7 +900,7 @@ function createButtons(state){
             
             //Get the price accoarding to the turret's level
             price3 = fetchPrice(level3);
-            let b3 = new Button(buttonsX, buttonsYmargin * (buttons.length + 2), `./images/buttons/btn_range${level3}.png`, () => {upgradeRange(price3)}, price3);
+            let b3 = new Button(buttonsX, buttonsYmargin * (buttons.length + 2), `../images/turret/btn_range${level3}.png`, () => {upgradeRange(price3)}, price3);
             addButton(b3);
         }
         break;
