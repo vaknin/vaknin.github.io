@@ -28,10 +28,10 @@ let hoveredTurret = undefined;
 let selectedTurret = undefined;
 
 //Shop
-const turretPrice = 100;
-const upgrade1Price = 150;
-const upgrade2Price = 400;
-const upgrade3Price = 750;
+const turretPrice = 150;
+const upgrade1Price = 200;
+const upgrade2Price = 500;
+const upgrade3Price = 1000;
 
 //Player info
 let lives = 20;
@@ -349,7 +349,7 @@ class Enemy{
                 addAttributes(e, 'small');
                 objects.push(e);
                 enemies.push(e);
-                await sleep(500);
+                await sleep(75);
             }
         }
 
@@ -970,7 +970,7 @@ function addAttributes(e, type){
         e.reward = 25;
         e.color = 'green';
         e.r = 20;
-        e.contains = 3;
+        e.contains = 5;
         break;
 
         //Huge enemies
