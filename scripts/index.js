@@ -65,13 +65,13 @@ function toggleHoverImage(btn){
 
     //Button is in hover state - change to regular image
     if(btn.hover){
-        btn.element.setAttribute("src", `/images/index/${btn.element.id.slice(4)}.png`);
+        btn.element.setAttribute("src", `../images/index/${btn.element.id.slice(4)}.png`);
     }
 
     //Button is not in hover state - change to hover image
     else{
         
-        btn.element.setAttribute("src", `/images/index/${btn.element.id.slice(4)}_hover.png`);
+        btn.element.setAttribute("src", `../images/index/${btn.element.id.slice(4)}_hover.png`);
     }
 
     btn.hover = !btn.hover;
