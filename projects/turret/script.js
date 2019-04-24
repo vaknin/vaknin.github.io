@@ -35,8 +35,7 @@ const upgrade3Price = 750;
 
 //Player info
 let lives = 20;
-//let money = 150;
-let money = 1500;
+let money = 150;
 const statsY = canvas.height * 0.075;
 const waveX = canvas.width * 0.05;
 const livesX = canvas.width * 0.25;
@@ -68,6 +67,7 @@ class Turret{
         this.y = y;
         this.r1 = 23;
         this.r2 = 17;
+        this.r = Math.max(this.r1, this.r2);
         this.damage = 1;
         this.range = 125;
         this.cannonLength = 30;
@@ -600,7 +600,7 @@ canvas.addEventListener('mousemove', e => {
         }
     }
 
-    //#region Check whether a turret is being hovered
+    //#region Collision with turrets
     for(let i = 0; i < turrets.length; i++){
         
         //The current turret we're checking
@@ -639,7 +639,7 @@ canvas.addEventListener('mousemove', e => {
 
     //#endregion
 
-    //#region Check whether a button is being hovered
+    //#region Collision with buttons
     
     //Check for button interaction
     if (mouseX >= buttonsX){
@@ -668,7 +668,7 @@ canvas.addEventListener('mousemove', e => {
 
     //#endregion
 
-    //#region Check whether the map is being hovered
+    //#region Collision with enemy's route
 
     if (hoveredTurret && hoveredTurret.held){
 
@@ -676,7 +676,23 @@ canvas.addEventListener('mousemove', e => {
 
             let cp = checkpoints[i];
             let ncp = checkpoints[i+1];
-            //if ()//todo lel
+            let r = hoveredTurret.r;
+
+            //Straight line
+            if (cp.x != ncp.x){
+                if ((mouseX >= cp.x - r && mouseX <= ncp.x + r) && ((mouseY >= cp.y - r) && (mouseY <= cp.y + r))){
+                    hoveredTurret.taken = true;
+                    break;
+                }
+            }
+
+            //Perpendicular line
+            else{
+                if (((mouseX >= cp.x - r) && (mouseX <= cp.x + r)) && (mouseY >= Math.min(cp.y, ncp.y) - r && (mouseY <= Math.max(cp.y, ncp.y) + r))){
+                    hoveredTurret.taken = true;
+                    break;
+                }
+            }
         }
     }
 
@@ -965,142 +981,7 @@ function addAttributes(e, type){
     e.updateAttributes();
 }
 
-/*//Create the enemies route dynamically
-function populateCheckpointsArray(){
-
-    //The number of checkpoints to generate (Between 5 and 15, chosen randomly)
-    const numberOfCheckpoints = Math.round(Math.random() * 10 + 5);
-
-    //The X margin between two different checkpoints
-    const margin = canvas.width / (numberOfCheckpoints + 1);
-
-    let x, y;
-    let lastX, lastY;
-    let angle;
-    let rectHeight = 0.001 * canvas.width;
-    
-    for (let i = 0; i < numberOfCheckpoints; i++){
-
-        //First checkpoint is fixed - (0, H/2)
-        if (i == 0){
-            x = 0;
-            y = canvas.height / 2;
-            let p = new Point(x, y);
-            checkpoints.push(p);
-            continue;
-        }
-
-        //Set the 2nd checkpoint as it will create a straight line with the first checkpoint
-        else if (i == 1){
-            lastX = checkpoints[i - 1].x;
-            lastY = checkpoints[i - 1].y;
-
-            while (true){
-            
-                //The x value is calculated simply by adding the margin to the last checkpoint's x value
-                x = lastX + margin;
-    
-                //The y value is randomly generated
-                y = Math.random() * (canvas.height*0.85 - canvas.height*0.15) + canvas.height*0.15;
-
-                angle = getAngle(lastX, lastY, x, y);
-                if (angle % 180 == 0){
-                    break;
-                }
-            }
-        }
-
-        //Last checkpoint is fixed - (W, H/2)
-        else if (i == numberOfCheckpoints - 1){
-            x = canvas.width;
-            y = canvas.height / 2;
-        }
-
-        //Rest of the checkpoints are randomly placed
-        else{
-
-            lastX = checkpoints[i - 1].x;
-            lastY = checkpoints[i - 1].y;
-
-            x = lastX + margin;
-
-            let count = 0;
-            while (true){
-                count++;
-                y = Math.random() * (canvas.height*0.75 - canvas.height*0.25) + canvas.height*0.25;
-                let angle = getAngle(x, y, lastX, lastY);
-                if (angle % 45 == 0 || count == 1000){
-                    console.log(count);
-                    
-                    break;
-                }
-            }
-        }
-
-        //Add the checkpoint to the checkpoints array
-        let p = new Point(x, y);
-        checkpoints.push(p);
-    }
-
-    let nextX, nextY;
-    let rectWidth;
-
-    for (let i = 0; i < checkpoints.length; i++){
-
-        //Current X & Y
-        x = checkpoints[i].x;
-        y = checkpoints[i].y;
-
-        //Next X & Y
-        if (i != checkpoints.length - 1){
-            nextX = checkpoints[i + 1].x;
-            nextY = checkpoints[i + 1].y;
-            let angle = getAngle(x,y, nextX, nextY, true);
-            let d = Math.sqrt((x - nextX)*(x - nextX) + (y - nextY)*(y - nextY));
-            checkpoints[i].angle = angle;
-            checkpoints[i].w = d;
-            checkpoints[i].h = rectHeight;
-            //console.log(`angle: ${angle}, h: ${checkpoints[i].h * 2} w: ${checkpoints[i].w}, x1: ${x} y1: ${y} x2: ${nextX} y2: ${nextY}`);
-        }
-    }
-}
-
-//After populating the checkpoints array, draw them(every frame)
-function drawCheckpoints(){
-    
-    let x, y;
-    let nextX, nextY;
-    let rectHeight = 0.03 * canvas.width;
-    let rectWidth;
-
-    for (let i = 0; i < checkpoints.length; i++){
-
-        //Current X & Y
-        x = checkpoints[i].x;
-        y = checkpoints[i].y;
-
-        //Next X & Y
-        if (i != checkpoints.length - 1){
-            nextX = checkpoints[i + 1].x;
-            nextY = checkpoints[i + 1].y;
-            let angle = getAngle(x,y, nextX, nextY);
-            let d = Math.sqrt((x - nextX)*(x - nextX) + (y - nextY)*(y - nextY));
-
-            rectWidth = d * 1.5;
-            ctx.beginPath();
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate((angle - 180) * Math.PI/180);
-            ctx.translate(x*-1, y*-1);
-
-            ctx.fillStyle = 'lightblue';
-            ctx.fillRect(x, y, rectWidth, rectHeight);
-            ctx.closePath();
-            ctx.restore();
-        }
-    }
-}*/
-
+//Create the map array
 function createCheckpoints(){
 
 
@@ -1192,6 +1073,7 @@ function createCheckpoints(){
     }
 }
 
+//Draw the enemey's path
 function drawMap(){
     for (let i = 0; i < checkpoints.length; i++){
         if (i == checkpoints.length - 1){
@@ -1212,7 +1094,7 @@ function drawMap(){
 function transitionWaveText(){
     ctx.fillStyle = 'black';
     ctx.font = '30px Arial';
-    ctx.fillText('Press Enter to send the next wave', canvas.width * 0.35, canvas.height * 0.85);
+    ctx.fillText('Press Enter to send the wave, (You can press enter mid-wave as well)', canvas.width * 0.15, canvas.height * 0.95);
     ctx.font = '22px Arial';
 }
 
