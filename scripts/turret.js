@@ -1138,8 +1138,7 @@ function nextWave(){
         }
 
         //Big enemies
-        //else if (type > 0.75 && type <= 0.9){
-        if (true){
+        else if (type > 0.75 && type <= 0.9){
             type = 'big';
         }
 
