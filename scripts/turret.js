@@ -247,7 +247,7 @@ class Turret{
         objects.push(p);
 
         //Turret fire sound
-        let a = new Audio('./Sounds/M1.wav');
+        let a = new Audio('../sounds/turret/M1.wav');
         a.volume = 0.35;
         a.play();
     }
@@ -291,10 +291,6 @@ class Enemy{
         //Calcualte distance between the enemy and the current target(next checkpoint to arrive to)
         let d = Math.sqrt((this.x - this.targetX)*(this.x - this.targetX) + (this.y - this.targetY)*(this.y - this.targetY));
         
-        /*if (d <= Math.min(this.dx, this.dy)){
-            this.changeCheckpoint();
-        }*/
-
         if (d <= this.r){
             this.changeCheckpoint();
         }
@@ -738,7 +734,6 @@ function draw(){
     ctx.fillRect(0,0, canvas.width, canvas.height);
 
     //Draw map
-    //drawCheckpoints();
     drawMap();
 
     //Draw objects
@@ -884,7 +879,6 @@ function createButtons(state){
             
             //Get the price accoarding to the turret's level
             price1 = fetchPrice(level1);
-            
             let b1 = new Button(buttonsX, buttonsYmargin * (buttons.length + 2), `./images/buttons/btn_firerate${level1}.png`, () => {upgradeFireRate(price1)}, price1);
             
             addButton(b1);
@@ -896,7 +890,6 @@ function createButtons(state){
 
             //Get the price accoarding to the turret's level
             price2 = fetchPrice(level2);
-
             let b2 = new Button(buttonsX, buttonsYmargin * (buttons.length + 2), `./images/buttons/btn_damage${level2}.png`, () => {upgradeDamage(price2)}, price2);
             addButton(b2);
         }
@@ -907,11 +900,9 @@ function createButtons(state){
             
             //Get the price accoarding to the turret's level
             price3 = fetchPrice(level3);
-            
             let b3 = new Button(buttonsX, buttonsYmargin * (buttons.length + 2), `./images/buttons/btn_range${level3}.png`, () => {upgradeRange(price3)}, price3);
             addButton(b3);
         }
-
         break;
 
         //#endregion
@@ -983,7 +974,6 @@ function addAttributes(e, type){
 
 //Create the map array
 function createCheckpoints(){
-
 
     let numberOfCheckpoints = 26; // must be even
     let x, y;
@@ -1163,7 +1153,6 @@ function randomColor(){
     let c1 = Math.round(Math.random() * 255);
     let c2 = Math.round(Math.random() * 255);
     let c3 = Math.round(Math.random() * 255);
-
     return `rgb(${c1},${c2},${c3})`;
 }
 

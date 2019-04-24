@@ -13,6 +13,7 @@ Features/Todo:
 /*The timer class recieves a time parameter as a string of 4 digits, 
 then it slices it, the first two digits are the minutes,
 and the last two digits are the seconds, such as: "MMSS"*/
+
 class Timer{
 	constructor(time){
 		let minutes = time.slice(0,2);
@@ -66,7 +67,7 @@ let clock = document.getElementById('clock');
 let txt_cycles = document.getElementById('cycles');
 let tomato = document.getElementById('tomato');
 
-let alarm = new Audio("../sounds/alarm.wav");
+let alarm = new Audio("../sounds/pomodoro/alarm.wav");
 
 
 let inBreak = false;
@@ -169,7 +170,7 @@ function endCycle(){
 function disableSleep(){
 	//If mobile - prevent sleep
 	if (getWidth() < 1024){
-		let noSleep = new Audio("../sounds/silence.wav");
+		let noSleep = new Audio("../sounds/pomodoro/silence.wav");
 		noSleep.loop = true;
 		noSleep.play();	
 	}
@@ -309,7 +310,7 @@ function speakerBtnOnClick(){
 
 //#region Rain button
 
-let rain = new Audio("../sounds/rain.mp3");
+let rain = new Audio("../sounds/pomodoro/rain.mp3");
 rain.loop = true;
 
 function rainBtnOnClick(){
