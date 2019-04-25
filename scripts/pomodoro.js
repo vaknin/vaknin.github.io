@@ -365,8 +365,6 @@ function sleep(ms){
 //#endregion
 
 //#region Main method
-console.log('test');
-
 btn_start.style.backgroundImage = `url(../images/pomodoro/start.png)`;
 animateButton(btn_speaker, 2, 1000);
 let pomodoro = new Timer("2500");
