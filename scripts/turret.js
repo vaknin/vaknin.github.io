@@ -345,7 +345,7 @@ class Enemy{
                 let e = new Enemy();
                 e.x = this.x;
                 e.y = this.y;
-                e.checkpoint = this.checkpoint;
+                e.checkpoint = this.checkpoint - 1;
                 addAttributes(e, 'small');
                 objects.push(e);
                 enemies.push(e);

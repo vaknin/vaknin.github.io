@@ -136,7 +136,8 @@ body{
     #header{
         height: 20vh;
         font-size: 3rem;
-        color: rgba(2, 2, 2, 0.85);
+        color: rgba(94, 255, 0, 0.85);
+        -webkit-text-stroke: 1px black;
     }
 
     .h2{

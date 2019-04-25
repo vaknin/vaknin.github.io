@@ -45,13 +45,9 @@ btns.forEach(b => {
 });
 
 //Dark/Light themes
-let darkTheme = false;
 let wrappers = document.getElementsByClassName('wrapper');
 let borders = document.getElementsByClassName('border');
 let header = document.getElementById('header');
-
-//Header onClick causes theme toggle
-header.onclick = toggleTheme;
 
 //Mobile variable used for checking the user's platform(Mobile/Desktop)
 let mobile = new Boolean;
@@ -94,34 +90,4 @@ async function prepareButton(b){
 function sleep(ms){
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-//#endregion
-
-//#region Light/Dark themes
-
-function toggleTheme(){
-    //Change to light-theme
-    if(darkTheme){
-        for(let i = 0; i < wrappers.length; i++){
-            wrappers[i].style.backgroundColor = "rgba(255, 255, 255, 0.4)";
-        }
-        for(let i = 0; i < borders.length; i++){
-            borders[i].style.borderRight = "#666 solid 1px";
-        }
-        header.style.color = "rgba(68, 63, 63, 0.849)";
-    }
-
-    //Change to dark-theme
-    else{
-        for(let i = 0; i < wrappers.length; i++){
-            wrappers[i].style.backgroundColor = "rgba(0, 0, 0, 0.35)";
-        }
-        for(let i = 0; i < borders.length; i++){
-            borders[i].style.borderRight = "#EEE solid 1px";
-        }
-        header.style.color = "rgba(0, 0, 0, 0.753)";
-    }
-
-    darkTheme = !darkTheme;
-}
-
 //#endregion
