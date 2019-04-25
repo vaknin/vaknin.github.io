@@ -66,10 +66,7 @@ class Timer{
 let clock = document.getElementById('clock');
 let txt_cycles = document.getElementById('cycles');
 let tomato = document.getElementById('tomato');
-
 let alarm = new Audio("../sounds/pomodoro/alarm.wav");
-
-
 let inBreak = false;
 let bigBreak = false;
 let inSession = false;
@@ -80,9 +77,11 @@ let interval;
 //Buttons
 let btn_start = document.getElementById('btn_start');
 btn_start.onclick = startBtnOnClick;
+btn_start.style.backgroundImage = `url(../images/pomodoro/start.png)`;
 
 let btn_break = document.getElementById('btn_break');
 let breakInterval;
+btn_break.style.backgroundImage = `url(../images/pomodoro/break_circle.png)`;
 
 let btn_speaker = document.getElementById('btn_speaker');
 let speakerInterval;
@@ -90,6 +89,7 @@ btn_speaker.onclick = speakerBtnOnClick;
 
 let btn_rain = document.getElementById('btn_rain');
 btn_rain.onclick = rainBtnOnClick;
+btn_rain.style.backgroundImage = `url(../images/pomodoro/rain.png)`;
 
 let breakInitialized = false;
 
