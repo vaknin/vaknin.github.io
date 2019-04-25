@@ -60,10 +60,6 @@ function draw(){
     });
 }
 
-setInterval(() => {
-    console.log(selectedUnits.length, `ctrl: ${CTRL}`);
-}, 500);
-
 //#endregion
 
 //#region Input (clicks, keypresses, etc.)
@@ -80,12 +76,14 @@ document.addEventListener('contextmenu', e => {
 
     else if (e.button == 0){
         leftClick(e);
+        console.log(selectedUnits.length);
     }
 });
 
 //Mouse left-click
 document.addEventListener('click', e => {
     leftClick(e);
+    console.log(selectedUnits.length);
 });
 
 function leftClick(e){
@@ -206,11 +204,12 @@ function select(unit, state){
     //Deselect the unit
     else{
         unit.selected = false;
-        selectedUnits.splice(selectedUnits.indexOf(unit));
+        selectedUnits.splice(selectedUnits.indexOf(unit), 1);
     }
     
 }
 
+//Deselects all units
 function deselectAll(){
     selectedUnits.forEach(u => {
         u.selected = false;
