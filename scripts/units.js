@@ -18,7 +18,7 @@ let originX, originY;
 
 //Consts
 const background = 'teal';
-const selectionRectColor = 'rgba(75, 75, 255, 0.35)';
+const selectionRectColor = 'rgba(0, 0, 175, 0.2)';
 //#endregion
 
 //#region Classes
@@ -207,6 +207,11 @@ function leftClick(e){
         }
     }
 
+    //In case of collision with the ground, diselect all units
+    if (!CTRL){
+        deselectAll();
+    }
+
     //#endregion
 }
 
@@ -233,7 +238,7 @@ document.addEventListener('mouseup', e => {
     rectSelect();
 });
 
-//Start rect selection
+//Mouse left-click
 document.addEventListener('mousedown', e => {
 
     //Check whether control is pressed, in order to not execute the same function twice
