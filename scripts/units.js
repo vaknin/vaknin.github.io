@@ -74,16 +74,21 @@ class Unit{
         let d = this.destination.distance(this.position);
 
         //Calculate the movement
-        let normalizedX = (this.x - destination.x) / d;
-        let normalizedY = (this.y - destination.y) / d;
-        this.dx = normalizedX * this.speed;
-        this.dy = normalizedY * this.speed;
+        let normalizedX = (this.position.x - destination.x) / d;
+        let normalizedY = (this.position.y - destination.y) / d;
+        this.dx = normalizedX * this.speed * -1;
+        this.dy = normalizedY * this.speed * -1;
     }
 
     //If the unit has a destination, it will move there with this function
     move(){
         this.position.x += this.dx;
         this.position.y += this.dy;
+
+        let d = this.destination.distance(this.position);
+        if (d <= this.speed){
+            this.destination = undefined;
+        }
     }
 }
 
@@ -271,20 +276,6 @@ document.addEventListener('contextmenu', e => {
 
     //Disable right-click context menu
     e.preventDefault();
-
-    //Right click
-    if (e.button == 2){
-        selectedUnits.forEach(u => {
-            
-            let p = new Point(e.clientX, e.clientY);
-            u.setDestination(p);
-        });
-    }
-
-    //Left click + CTRL
-    else if (e.button == 0){
-        leftClick(e);
-    }
 });
 
 //Stop rect selection and deselect on ground collision
@@ -297,11 +288,17 @@ document.addEventListener('mouseup', e => {
 //Mouse left-click
 document.addEventListener('mousedown', e => {
 
-    console.log(e.button);
-    
-    //Check whether control is pressed, in order to not execute the same function twice
-    if (!CTRL){
+    //Left-click
+    if (e.button == 0){
         leftClick(e);
+    }
+    
+    //Right-click
+    else if (e.button == 2){
+        selectedUnits.forEach(u => {
+            let p = new Point(e.clientX, e.clientY);
+            u.setDestination(p);
+        });
     }
 });
 
@@ -348,8 +345,6 @@ function select(unit, state){
 
     //Select the unit
     if (state){
-        console.log(unit);
-        
         unit.selected = true;
         selectedUnits.push(unit);
     }
