@@ -23,20 +23,31 @@ const selectionRectColor = 'rgba(0, 0, 175, 0.2)';
 
 //#region Classes
 
+//Unit
 class Unit{
-    constructor(x, y, r){
-        this.x = x;
-        this.y = y;
+
+    //Constructor
+    constructor(p, r){
+        this.position = p;
         this.r = r;
+        this.speed = 5;
         this.selected = false;
     }
 
+    //This function is executed once every frame
     draw(){
 
-        //Selection effect
+        //Movement
+        if (this.destination){
+            this.move();
+        }
+
+        //#region Draw
+
+        //Draw selection effect
         if (this.selected){
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.r + 4, 0, Math.PI * 2, true);
+            ctx.arc(this.position.x, this.position.y, this.r + 4, 0, Math.PI * 2, true);
             ctx.fillStyle = 'blue';
             ctx.fill();   
             ctx.closePath();
@@ -44,10 +55,50 @@ class Unit{
         
         //Draw the unit
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, true);
+        ctx.arc(this.position.x, this.position.y, this.r, 0, Math.PI * 2, true);
         ctx.fillStyle = 'black';
         ctx.fill();
         ctx.closePath();
+        //#endregion
+    }
+
+    //Sets the unit's destination to the given target(may be an enemy or just the ground)
+    setDestination(destination){
+        //TODO: if some other unit already goes to that destination, alter destination a bit
+        //TODO2: if an enemy dies, might need to cancel destination
+
+        //The target (Enemy / Location)
+        this.destination = destination;
+
+        //The distance to the target
+        let d = this.destination.distance(this.position);
+
+        //Calculate the movement
+        let normalizedX = (this.x - destination.x) / d;
+        let normalizedY = (this.y - destination.y) / d;
+        this.dx = normalizedX * this.speed;
+        this.dy = normalizedY * this.speed;
+    }
+
+    //If the unit has a destination, it will move there with this function
+    move(){
+        this.position.x += this.dx;
+        this.position.y += this.dy;
+    }
+}
+
+//Vector 2 class
+class Point{
+
+    //Constructor
+    constructor(x, y){
+        this.x = x;
+        this.y = y;
+    }
+
+    //Calculates the distance from the point to the given point
+    distance(p){
+        return Math.sqrt((this.x - p.x) *  (this.x - p.x) + (this.y - p.y) * (this.y - p.y));
     }
 }
 
@@ -160,7 +211,7 @@ function leftClick(e){
         let u = units[i];
 
         //Distance between the cursor and the unit
-        let d = Math.sqrt((mouseX - u.x) * (mouseX - u.x) + (mouseY - u.y) * (mouseY - u.y));
+        let d = Math.sqrt((mouseX - u.position.x) * (mouseX - u.position.x) + (mouseY - u.position.y) * (mouseY - u.position.y));
 
         //If the distance is less than or equal to the unit's radius, collision detected
         if (d <= u.r){
@@ -223,6 +274,11 @@ document.addEventListener('contextmenu', e => {
 
     //Right click
     if (e.button == 2){
+        selectedUnits.forEach(u => {
+            
+            let p = new Point(e.clientX, e.clientY);
+            u.setDestination(p);
+        });
     }
 
     //Left click + CTRL
@@ -241,6 +297,8 @@ document.addEventListener('mouseup', e => {
 //Mouse left-click
 document.addEventListener('mousedown', e => {
 
+    console.log(e.button);
+    
     //Check whether control is pressed, in order to not execute the same function twice
     if (!CTRL){
         leftClick(e);
@@ -265,7 +323,8 @@ document.addEventListener('keydown', e => {
 
     //D key (Debug)
     else if (e.which == 68){
-        let u = new Unit(mouseX, mouseY, 25);
+        let p = new Point(mouseX, mouseY);
+        let u = new Unit(p, 25);
         objects.push(u);
         units.push(u);
     }
@@ -289,6 +348,8 @@ function select(unit, state){
 
     //Select the unit
     if (state){
+        console.log(unit);
+        
         unit.selected = true;
         selectedUnits.push(unit);
     }
@@ -334,8 +395,8 @@ function rectSelect(){
     for (let i = 0; i < units.length; i++){
         
         let u = units[i];
-        let insideX = (u.x >= minX - u.r) && (u.x <= maxX + u.r);
-        let insideY = (u.y >= minY - u.r) && (u.y <= maxY + u.r);
+        let insideX = (u.position.x >= minX - u.r) && (u.position.x <= maxX + u.r);
+        let insideY = (u.position.y >= minY - u.r) && (u.position.y <= maxY + u.r);
 
         //The unit was inside the selection rect, select it
         if (insideX && insideY){
