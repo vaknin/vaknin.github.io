@@ -30,6 +30,7 @@ class Unit{
     constructor(p, r){
         this.position = p;
         this.r = r;
+        this.selectionR = r + r * 0.2;
         this.speed = 5;
         this.selected = false;
     }
@@ -47,7 +48,7 @@ class Unit{
         //Draw selection effect
         if (this.selected){
             ctx.beginPath();
-            ctx.arc(this.position.x, this.position.y, this.r + 4, 0, Math.PI * 2, true);
+            ctx.arc(this.position.x, this.position.y, this.selectionR, 0, Math.PI * 2, true);
             ctx.fillStyle = 'blue';
             ctx.fill();   
             ctx.closePath();
@@ -193,85 +194,9 @@ function draw(){
 
 //#endregion
 
-//#region Input (clicks, keypresses, etc.)
+//#region Input
 
-//left click delegate
-function leftClick(e){
-
-    //Rect selection
-    selecting = true;
-    originX = mouseX;
-    originY = mouseY;
-
-    //Update cursor position
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-
-    //#region Detect cursor collision with units
-
-    //Search for collision with any ally unit
-    for (let i = 0; i < units.length; i++){
-
-        //The unit to check collision with
-        let u = units[i];
-
-        //Distance between the cursor and the unit
-        let d = Math.sqrt((mouseX - u.position.x) * (mouseX - u.position.x) + (mouseY - u.position.y) * (mouseY - u.position.y));
-
-        //If the distance is less than or equal to the unit's radius, collision detected
-        if (d <= u.r){
-
-            //If there are already units selected
-            if (selectedUnits.length > 0){
-
-                //CTRL is pressed
-                if (CTRL){
-
-                    //The unit is not selected, add the clicked unit to the selected units 
-                    if (!u.selected){
-                        select(u, true);
-                        return;
-                    }
-
-                    //The unit is already selected, remove it from the selected units
-                    else{
-                        select(u, false);
-                        return;
-                    }
-                }
-
-                //CTRL is not pressed
-                else{
-                    //The only selected unit is clicked, deselct it
-                    if (selectedUnits.length == 1 && selectedUnits[0] == u){
-                        select(u, false);
-                        return;
-                    }
-
-                    //The unit is not selected, deselect all units but this one
-                    deselectAll();
-                    select(u, true);
-                    return;
-                }
-            }
-
-            //No units are selected - Select the unit
-            else{
-                select(u, true);
-                return;
-            }
-        }
-    }
-
-    //In case of collision with the ground, diselect all units
-    if (!CTRL){
-        deselectAll();
-    }
-
-    //#endregion
-}
-
-//Mouse right-click
+//Disable right-click menu
 document.addEventListener('contextmenu', e => {
 
     //Disable right-click context menu
@@ -282,23 +207,95 @@ document.addEventListener('contextmenu', e => {
 document.addEventListener('mouseup', e => {
 
     //Rect selection
-    rectSelect();
+    if (e.button == 0 && selecting){
+        rectSelect();
+    }
 });
 
-//Mouse left-click
+//Mouse click
 document.addEventListener('mousedown', e => {
 
-    //Left-click
-    if (e.button == 0){
-        leftClick(e);
-    }
-    
     //Right-click
-    else if (e.button == 2){
+    if (e.button == 2){
         selectedUnits.forEach(u => {
             let p = new Point(e.clientX, e.clientY);
             u.setDestination(p);
         });
+    }
+
+    //Left-click
+    else if (e.button == 0){
+        //Rect selection
+        selecting = true;
+        originX = mouseX;
+        originY = mouseY;
+
+        //Update cursor position
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        //#region Detect cursor collision with units
+
+        //Search for collision with any ally unit
+        for (let i = 0; i < units.length; i++){
+
+            //The unit to check collision with
+            let u = units[i];
+
+            //Distance between the cursor and the unit
+            let d = Math.sqrt((mouseX - u.position.x) * (mouseX - u.position.x) + (mouseY - u.position.y) * (mouseY - u.position.y));
+
+            //If the distance is less than or equal to the unit's radius, collision detected
+            if (d <= u.r){
+
+                //If there are already units selected
+                if (selectedUnits.length > 0){
+
+                    //CTRL is pressed
+                    if (CTRL){
+
+                        //The unit is not selected, add the clicked unit to the selected units 
+                        if (!u.selected){
+                            select(u, true);
+                            return;
+                        }
+
+                        //The unit is already selected, remove it from the selected units
+                        else{
+                            select(u, false);
+                            return;
+                        }
+                    }
+
+                    //CTRL is not pressed
+                    else{
+                        //The only selected unit is clicked, deselct it
+                        if (selectedUnits.length == 1 && selectedUnits[0] == u){
+                            select(u, false);
+                            return;
+                        }
+
+                        //The unit is not selected, deselect all units but this one
+                        deselectAll();
+                        select(u, true);
+                        return;
+                    }
+                }
+
+                //No units are selected - Select the unit
+                else{
+                    select(u, true);
+                    return;
+                }
+            }
+        }
+
+        //In case of collision with the ground, diselect all units
+        if (!CTRL){
+            deselectAll();
+        }
+
+        //#endregion
     }
 });
 
@@ -321,7 +318,7 @@ document.addEventListener('keydown', e => {
     //D key (Debug)
     else if (e.which == 68){
         let p = new Point(mouseX, mouseY);
-        let u = new Unit(p, 25);
+        let u = new Unit(p, 12);
         objects.push(u);
         units.push(u);
     }
@@ -338,7 +335,7 @@ document.addEventListener('keyup', e => {
 
 //#endregion
 
-//#region Game Mechanics
+//#region Unit Selection
 
 //Select/Deselect a unit
 function select(unit, state){
