@@ -12,6 +12,7 @@ body {
 }
 
 .canvas_container{
+    cursor: pointer;
     margin-top: 5rem;
     position: relative;
     text-align: center;

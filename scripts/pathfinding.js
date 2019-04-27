@@ -1,6 +1,6 @@
 //#region Canvas
 let canvas = document.getElementById('canvas');
-canvas.width = window.innerWidth / 2;
+canvas.width = window.innerWidth * 0.8;
 canvas.height = window.innerHeight / 2;
 let ctx = canvas.getContext('2d');
 let cx = canvas.getBoundingClientRect().x;
@@ -20,10 +20,15 @@ const visitedColor = 'pink';
 //Variables
 let squareSize = 32;
 let grid = [[]];
+let visited = [];
 let frontier = [];
 let start, goal;
 let gridHeight = canvas.height;
 let gridWidth = canvas.width;
+let mousedown = false;
+let interval;
+let currentColor = wallColor;
+const mouseclickDelay = 3;
 
 //Initialize grid
 while (gridHeight % squareSize != 0){
@@ -145,6 +150,9 @@ function sleep(ms){
 //Apply algorithm
 async function breadthFirst(){
 
+    clearGrid();
+
+    //Make sure not trying to run the algorithm without start and goal points
     if (start == undefined || goal == undefined){
         return;
     }
@@ -199,6 +207,7 @@ async function breadthFirst(){
 
                     s.cameFrom = square;
                     s.visited = true;
+                    visited.push(s);
 
                     //Mark progress
                     if (s != start && s != goal){
@@ -244,83 +253,102 @@ async function breadthFirst(){
     }
 }
 
-//On-click listener
-document.addEventListener('click', e => {
+function clearGrid(){
+    visited.forEach(s => {
+        s.visited = false;
+        if (s.color == visitedColor || s.color == pathColor){
+            s.color = undefined;
+        }
+    });
+}
 
-    frontier = [];
-    let x = e.clientX;
-    let y = e.clientY;
+//Left-click
+function click(){
+    let x = mouseX;
+    let y = mouseY;
 
+    outer:
     for (let i = 0; i < rows; i++){
         for (let j = 0; j < columns; j++){
 
             let s = grid[i][j];
-            s.visited = undefined;
-            if (s.color != wallColor && s.color != startColor && s.color != goalColor){
-                s.color = undefined;
-            }
             let correctX = x >= s.x && x <= s.x + squareSize;
             let correctY = y >= s.y && y <= s.y + squareSize;
     
-            //Change square type: null -> wall -> start/goal
+            //Change square color
             if (correctX && correctY){
-                switch(s.color){
-
-                    //undefind -> wall
-                    case undefined:
-                    s.color = wallColor;
-                    break;
-
-                    //wall -> start/goal
-                    case wallColor:
-
-                    //There are already start and goal, or there are neither - put start
-                    if ((start && goal) || (!start && !goal)){
-                        goal.color = undefined;
-                        goal = undefined;
+                if ((start && currentColor == startColor) || (s.color == startColor)){
+                    if (start){
                         start.color = undefined;
-                        s.color = startColor;
-                        start = s;
                     }
-
-                    //There's only start atm, put goal
-                    else if (start){
-                        s.color = goalColor;
-                        goal = s;
-                    }
-
-                    //There's only goal atm, put start
-                    else if (goal){
-                        s.color = startColor;
-                        start = s;
-                    }
-
-                    break;
-
-                    //start -> empty
-                    case startColor:
                     start = undefined;
-                    s.color = undefined;
-                    break;
+                }
 
-                    //goal -> empty
-                    case goalColor:
+                else if ((goal && currentColor == goalColor) || (s.color == goalColor)){
+                    if (goal){
+                        goal.color = undefined;
+                    }
                     goal = undefined;
-                    s.color = undefined;
-                    break;
+                }
+
+                s.color = currentColor;
+                if (currentColor == startColor){
+                    start = s;
+                }
+                else if (currentColor == goalColor){
+                    goal = s;
                 }
             }
         }
     }
 
+    clearGrid();
+}
+
+document.addEventListener('mousedown', e => {
+    interval = setInterval(() => {
+        click();
+    }, mouseclickDelay);
+});
+
+document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+document.addEventListener('mouseup', e => {
+    mousedown = false;
+    clearInterval(interval);
 });
 
 document.addEventListener('keydown', e => {
+
 
     //Press enter
     if (e.which == 13){
         breadthFirst();
     }
+
+    //1
+    else if (e.which == 49){
+        currentColor = wallColor;
+    }
+
+    //2
+    else if (e.which == 50){
+        currentColor = undefined;
+    }
+
+    //3
+    else if (e.which == 51){
+        currentColor = startColor;
+    }
+
+    //4
+    else if (e.which == 52){
+        currentColor = goalColor;
+    }
+
 });
 
 //Main method
