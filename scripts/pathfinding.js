@@ -1,7 +1,9 @@
 //#region Canvas
 let canvas = document.getElementById('canvas');
-canvas.width = window.innerWidth * 0.85;
-canvas.height = window.innerHeight * 0.4;
+const canvasW = window.innerWidth * 0.85; 
+const canvasH = window.innerHeight * 0.4;
+canvas.width = canvasW;
+canvas.height = canvasH;
 let ctx = canvas.getContext('2d');
 let cx = canvas.getBoundingClientRect().x;
 let cy = canvas.getBoundingClientRect().y;
@@ -26,9 +28,15 @@ let mousedown = false;
 let speedSlider = document.getElementById('slider_speed');
 let delay = 100;
 let wallSlider = document.getElementById('slider_wall');
-let wallDensity = 0.25;
+let wallDensity;
 let insideWallLoop;
 let reducedDensity;
+
+//Radios
+let breadthRadio = document.getElementById('radio_breadth');
+let heuristicRadio = document.getElementById('radio_heuristic');
+let astarRadio = document.getElementById('radio_astar');
+let activeRadio = 'breadth';
 
 let grid = [[]];
 let visited = [];
@@ -40,7 +48,6 @@ let gridHeight = canvas.height;
 let gridWidth = canvas.width;
 let interval;
 let currentColor = wallColor;
-let currentAlgorithm = breadthFirst;
 let animationFrameHandler;
 let sleepHandler;
 let hoveredSquare;
@@ -79,7 +86,7 @@ class Square{
         }
 
         //Stroke square
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
         ctx.stroke();
         ctx.closePath();
     }
@@ -247,7 +254,7 @@ async function randomWalls(){
             reducedDensity = true;
         }
 
-        delay = delayHolder;;
+        delay = delayHolder;
     }
 }
 
@@ -256,6 +263,7 @@ function main(){
     createGrid();
     draw();
     addStartAndGoal();
+    getDensity();
 }
 
 //#endregion
@@ -282,18 +290,41 @@ async function execute(){
         hoveredSquare = undefined;
     }
 
-    let foundPath = await currentAlgorithm();
+    let foundPath = await algorithm();
     return foundPath;
 }
 
 //Add the four square's neighbors
-function addNeighbores(){
+function addNeighbores(type){
+
+    let heuristicNeighbors = [];
+    let square;
 
     //Check the first square in the array (index 0)
-    let square = frontier[0];
+    switch (type){
+
+        //Breadth
+        case 'breadth':
+        square = frontier[0];
+        break;
+
+        //Heuristic
+        case 'heuristic':
+        let shortestDistance, closestSquare;
+        frontier.forEach(s => {
+            //Manhatten distance
+            let d = Math.abs(s.rowIndex - goal.rowIndex) + Math.abs(s.columnIndex - goal.columnIndex);
+            if (d < shortestDistance || shortestDistance == undefined){
+                shortestDistance = d;
+                closestSquare = s;
+            }
+        });
+        square = closestSquare;
+        break;
+    }
     
     //Remove the current square from the frontier
-    frontier.splice(0, 1);
+    frontier.splice(frontier.indexOf(square), 1);
     
     //Scan for the four neighboring squares
     for (let i = 0; i < 4; i++){
@@ -330,6 +361,29 @@ function addNeighbores(){
 
             //Check whether the square has already been visited and it's not a wall
             if (!s.visited && s.color != wallColor){
+
+                //Heuristic
+                if (type == 'heuristic'){
+                    heuristicNeighbors.push(s);
+                    if (i != 3){
+                        continue;
+                    }
+
+                    //Last iteration, pick the closest neighbor to goal
+                    else{
+                        let shortestDistance, closestSquare;
+                        heuristicNeighbors.forEach(s => {
+                            //Manhatten distance
+                            let d = Math.abs(s.rowIndex - goal.rowIndex) + Math.abs(s.columnIndex - goal.columnIndex);
+                            if (d < shortestDistance || shortestDistance == undefined){
+                                shortestDistance = d;
+                                closestSquare = s;
+                            }
+                        });
+
+                        s = closestSquare;
+                    }
+                }
 
                 s.cameFrom = square;
                 s.visited = true;
@@ -369,16 +423,18 @@ function addNeighbores(){
             }
         }
     }
+
+    if (type == 'heuristic'){
+
+    }
 }
 
-//Breadth-first, the foundation algorithm
-async function breadthFirst(){
-
+async function algorithm(){
     //While there are squares inside the frontier, continue looping
     while (frontier.length != 0){
 
         //Once the goal has been reached, return
-        let foundPath = addNeighbores();
+        let foundPath = addNeighbores(activeRadio);
 
         //Finished executing
         if (foundPath){
@@ -390,10 +446,6 @@ async function breadthFirst(){
             await sleep(delay);
         }
     }
-}
-
-//Heuristic
-async function heuristic(){
 }
 
 //#endregion
@@ -572,8 +624,8 @@ window.addEventListener('resize', () => {
 
     //Initialize grid
     cancelAnimationFrame(animationFrameHandler);
-    canvas.width = window.innerWidth * 0.8;
-    canvas.height = window.innerHeight / 2;
+    canvas.width = canvasW;
+    canvas.height = canvasH;
     let gridHeight = canvas.height;
     let gridWidth = canvas.width;
     while (gridHeight % squareSize != 0){
@@ -595,6 +647,20 @@ window.addEventListener('resize', () => {
     addStartAndGoal();
     draw();
 });
+
+//#region Algorithm radios
+
+function radioListener(radio, text){
+    radio.addEventListener('change', () => {
+        activeRadio = text;
+    });
+}
+radioListener(breadthRadio, 'breadth');
+radioListener(heuristicRadio, 'heuristic');
+radioListener(astarRadio, 'astar');
+
+
+//#endregion
 
 //#region Wall density
 
