@@ -29,7 +29,13 @@ let mousedown = false;
 let interval;
 let currentColor = wallColor;
 let animationFrameHandler;
+let delay = 100;
+let currentAlgorithm = breadthFirst;
+let sleepHandler;
 const mouseclickDelay = 3;
+
+//Speed slider
+let slider = document.getElementById('slider_speed');
 
 //Initialize grid
 while (gridHeight % squareSize != 0){
@@ -148,7 +154,7 @@ function addStartAndGoal(){
 //thread.sleep
 function sleep(ms){
     return new Promise(resolve => {
-        setTimeout(() => {
+        sleepHandler = setTimeout(() => {
             resolve();
         }, ms);
     });
@@ -156,6 +162,9 @@ function sleep(ms){
 
 //Clear visited & path tiles
 function clearGrid(){
+    clearTimeout(sleepHandler);
+    frontier.length = 0;
+
     visited.forEach(s => {
         s.visited = false;
         if (s.color == visitedColor || s.color == pathColor){
@@ -165,7 +174,7 @@ function clearGrid(){
 }
 
 //Main method
-function start(){
+function main(){
     createGrid();
     draw();
     addStartAndGoal();
@@ -185,10 +194,7 @@ async function breadthFirst(){
         return;
     }
 
-    let count = 1;
-    frontier = [];
-
-    //Add the four square's neighbores
+    //Add the four square's neighbors
     function addNeighbores(){
 
         //Check the first square in the array (index 0)
@@ -242,15 +248,16 @@ async function breadthFirst(){
                         s.color = visitedColor;
                     }
 
-                    s.count = count;
+                    //Add the neighbor to the frontier array
                     frontier.push(s);
-                    count++;
 
-                    //Reached the goal
+                    //Reached the goal square, stop
                     if (s == goal){
 
                         //Keep going back until reaching the start
                         while(true){
+
+                            //The square it came from
                             s = s.cameFrom;
 
                             //Reached back to start point, break the 'while' loop and finish the algorithm
@@ -266,18 +273,23 @@ async function breadthFirst(){
                             //Mark the path
                             s.color = pathColor;
                         }
-
                     }
                 }
             }
         }
     }
 
+    //Add the 'start' square to the frontier
     frontier.push(start);
 
+    //While there are squares inside the frontier, continue looping
     while (frontier.length != 0){
         addNeighbores();
-        await sleep(3);
+
+        //If speed is set to 10, instantly execute algorithm
+        if (slider.value != 10){
+            await sleep(delay);
+        }
     }
 }
 
@@ -291,10 +303,10 @@ async function greedyHeuristic(){
 
 //Left-click delegate
 function click(){
+
     let x = mouseX;
     let y = mouseY;
 
-    outer:
     for (let i = 0; i < rows; i++){
         for (let j = 0; j < columns; j++){
 
@@ -341,10 +353,31 @@ function click(){
 document.addEventListener('mousemove', e => {
     mouseX = e.clientX;
     mouseY = e.clientY;
+
+    //Not currently running an algorithm
+    if (frontier.length == 0){
+     
+        //Go through every square
+        for (let i = 0; i < rows; i++){
+            for (let j = 0; j < columns; j++){
+    
+                let s = grid[i][j];
+                let correctX = x >= s.x && x <= s.x + squareSize;
+                let correctY = y >= s.y && y <= s.y + squareSize;
+        
+                //Change the pressed square's color
+                if (correctX && correctY){
+    
+                }
+            }
+        }
+    }
 });
 
 //Mouse down
-document.addEventListener('mousedown', e => {
+canvas.addEventListener('mousedown', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
     interval = setInterval(() => {
         click();
     }, mouseclickDelay);
@@ -359,10 +392,10 @@ document.addEventListener('mouseup', e => {
 //Key press
 document.addEventListener('keydown', e => {
 
-
     //Press enter
     if (e.which == 13){
-        breadthFirst();
+        clearGrid();
+        currentAlgorithm();
     }
 
     //1
@@ -383,6 +416,18 @@ document.addEventListener('keydown', e => {
     //4
     else if (e.which == 52){
         currentColor = goalColor;
+    }
+
+    // + key to increase speed
+    else if (e.which == 187){
+        slider.value++;
+        slider.dispatchEvent(sliderEvent);
+    }
+
+    // - key to decrease speed
+    else if (e.which == 189){
+        slider.value--;
+        slider.dispatchEvent(sliderEvent);
     }
 
 });
@@ -415,7 +460,30 @@ window.addEventListener('resize', () => {
     draw();
 });
 
+//#region Speed slider
+
+//Change speed
+var sliderEvent = new Event('slider');
+slider.addEventListener('slider', () => {
+
+    //Reset the algorithm, if one is active
+    let running = false;
+    if (frontier.length > 0){
+        running = true;
+    }
+
+    //Change speed based on slider value
+    delay = 50 - slider.value * 5;
+
+    //If the algorithm was running when the slider value has changed, run it again
+    if (running){
+        currentAlgorithm();
+    }
+});
+
+//#endregion
+
 //#endregion
 
 //Main method
-start();
+main();

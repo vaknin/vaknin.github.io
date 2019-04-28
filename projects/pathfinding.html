@@ -13,12 +13,19 @@
     <div class="options_container">
         <div id="speed_container">
             <label for="slider_speed">Speed</label>
-            <input type="range" id="slider_speed" min="0" max="10" value="0">
+            <input type="range" id="slider_speed" min="1" max="10" value="5">
         </div>
 
-        <div id="breadth_container">
-            <label for="radio_breadth">Breadth-first</label>
-            <input type="radio" name="type" id="radio_breadth" checked="checked">
+        <div class="algorithms_container">
+            <div id="breadth_container">
+                <input type="radio" name="type" id="radio_breadth" checked="checked">
+                <label for="radio_breadth">Breadth-first</label>
+            </div>
+
+            <div id="astar_container">
+                <input type="radio" name="type" id="radio_astar">
+                    <label for="radio_astar">A*</label>
+                </div>
         </div>
     </div>
 
