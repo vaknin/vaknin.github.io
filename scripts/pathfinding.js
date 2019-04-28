@@ -28,6 +28,7 @@ let gridWidth = canvas.width;
 let mousedown = false;
 let interval;
 let currentColor = wallColor;
+let animationFrameHandler;
 const mouseclickDelay = 3;
 
 //Initialize grid
@@ -39,10 +40,12 @@ while (gridWidth % squareSize != 0){
 }
 
 //Consts
-const rows = gridWidth / squareSize;
-const columns = gridHeight / squareSize;
+let rows = gridWidth / squareSize;
+let columns = gridHeight / squareSize;
 
 //#endregion
+
+//#region Classes
 
 //Square class
 class Square{
@@ -68,11 +71,15 @@ class Square{
     }
 }
 
+//#endregion
+
+//#region Functions
+
 //Draw function - executed every frame
 function draw(){
 
     //Loop
-    requestAnimationFrame(draw);
+    animationFrameHandler = requestAnimationFrame(draw);
 
     //Draw background
     ctx.fillStyle = 'white';
@@ -147,7 +154,28 @@ function sleep(ms){
     });
 }
 
-//Apply algorithm
+//Clear visited & path tiles
+function clearGrid(){
+    visited.forEach(s => {
+        s.visited = false;
+        if (s.color == visitedColor || s.color == pathColor){
+            s.color = undefined;
+        }
+    });
+}
+
+//Main method
+function start(){
+    createGrid();
+    draw();
+    addStartAndGoal();
+}
+
+//#endregion
+
+//#region Algorithms
+
+//Breadth-first
 async function breadthFirst(){
 
     clearGrid();
@@ -253,16 +281,15 @@ async function breadthFirst(){
     }
 }
 
-function clearGrid(){
-    visited.forEach(s => {
-        s.visited = false;
-        if (s.color == visitedColor || s.color == pathColor){
-            s.color = undefined;
-        }
-    });
+//Greedy
+async function greedyHeuristic(){
 }
 
-//Left-click
+//#endregion
+
+//#region Events
+
+//Left-click delegate
 function click(){
     let x = mouseX;
     let y = mouseY;
@@ -275,8 +302,10 @@ function click(){
             let correctX = x >= s.x && x <= s.x + squareSize;
             let correctY = y >= s.y && y <= s.y + squareSize;
     
-            //Change square color
+            //Change the pressed square's color
             if (correctX && correctY){
+
+                //If placing a starting point, remove the existing one, if one exists
                 if ((start && currentColor == startColor) || (s.color == startColor)){
                     if (start){
                         start.color = undefined;
@@ -284,6 +313,7 @@ function click(){
                     start = undefined;
                 }
 
+                //If placing a goal point, remove the existing one, if one exists
                 else if ((goal && currentColor == goalColor) || (s.color == goalColor)){
                     if (goal){
                         goal.color = undefined;
@@ -291,6 +321,7 @@ function click(){
                     goal = undefined;
                 }
 
+                //Set the current square to the currently selected square type
                 s.color = currentColor;
                 if (currentColor == startColor){
                     start = s;
@@ -302,25 +333,30 @@ function click(){
         }
     }
 
+    //Clear the visited & path tiles
     clearGrid();
 }
 
+//Mousemove
+document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+//Mouse down
 document.addEventListener('mousedown', e => {
     interval = setInterval(() => {
         click();
     }, mouseclickDelay);
 });
 
-document.addEventListener('mousemove', e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-});
-
+//Mouse up
 document.addEventListener('mouseup', e => {
     mousedown = false;
     clearInterval(interval);
 });
 
+//Key press
 document.addEventListener('keydown', e => {
 
 
@@ -351,7 +387,35 @@ document.addEventListener('keydown', e => {
 
 });
 
+//Client resized the screen -> reset grid
+window.addEventListener('resize', () => {
+
+    //Initialize grid
+    cancelAnimationFrame(animationFrameHandler);
+    canvas.width = window.innerWidth * 0.8;
+    canvas.height = window.innerHeight / 2;
+    let gridHeight = canvas.height;
+    let gridWidth = canvas.width;
+    while (gridHeight % squareSize != 0){
+        gridHeight--;
+    }
+    while (gridWidth % squareSize != 0){
+        gridWidth--;
+    }
+    rows = gridWidth / squareSize;
+    columns = gridHeight / squareSize;
+    ctx = canvas.getContext('2d');
+    cx = canvas.getBoundingClientRect().x;
+    cy = canvas.getBoundingClientRect().y;
+    grid = [];
+    visited = [];
+    frontier = [];
+    createGrid();
+    addStartAndGoal();
+    draw();
+});
+
+//#endregion
+
 //Main method
-createGrid();
-draw();
-addStartAndGoal();
+start();

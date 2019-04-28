@@ -9,6 +9,19 @@
 </head>
 <body>
     <header>PATHFINDING</header>
+
+    <div class="options_container">
+        <div id="speed_container">
+            <label for="slider_speed">Speed</label>
+            <input type="range" id="slider_speed" min="0" max="10" value="0">
+        </div>
+
+        <div id="breadth_container">
+            <label for="radio_breadth">Breadth-first</label>
+            <input type="radio" name="type" id="radio_breadth" checked="checked">
+        </div>
+    </div>
+
     <div class="canvas_container">
         <canvas id="canvas"></canvas>
     </div>
