@@ -27,6 +27,7 @@ let slider = document.getElementById('slider_speed');
 let grid = [[]];
 let visited = [];
 let frontier = [];
+let walls = [];
 
 let start, goal;
 let gridHeight = canvas.height;
@@ -174,6 +175,69 @@ function clearGrid(){
     });
 }
 
+//Randomly place walls in the grid
+async function randomWalls(){
+
+    let wallPercentage = 0.5;
+    let count = 0;
+
+    //If executing, return
+    if (frontier.length != 0){
+        return;
+    }
+
+    //Keep looping until found a wall structure with a possible path
+    while(true){
+
+        //Count iterations
+        count++;
+
+        //Clear everything except goal/start
+        walls.forEach(s => {
+            s.color = undefined;
+        });
+        walls = [];
+        clearGrid();
+
+        for (let i = 0; i < rows; i++){
+            for (let j = 0; j < columns; j++){
+                let s = grid[i][j];
+
+                //Don't turn start/goal to a wall, search for other squares
+                if (s == start || s == goal){
+                    continue;
+                }
+
+                //Get a random number between 0~1
+                let rand = Math.random();
+
+                //chance to be a wall
+                if (rand > 1 - wallPercentage){
+                    s.color = wallColor;
+                    walls.push(s);
+                }
+            }
+        }
+
+        //Execute to see if there is a path
+        let delayHolder = delay;
+        delay = 0;
+
+        if (await execute()){
+            clearGrid();
+            delay = delayHolder;
+            break;
+        }
+
+        if (count == 20){
+            count = 0;
+            wallPercentage -= 0.01;
+        }
+
+        delay = delayHolder;;
+    }
+}
+
 //Main method
 function main(){
     createGrid();
@@ -184,6 +248,19 @@ function main(){
 //#endregion
 
 //#region Algorithms
+
+//Execute the current algorithm
+async function execute(){
+
+    //If there's a square currently hovered, ignore it
+    if (hoveredSquare){
+        hoveredSquare.color = hoveredSquare.previousColor;
+        hoveredSquare = undefined;
+    }
+
+    let bool = await currentAlgorithm();
+    return bool;
+}
 
 //Breadth-first
 async function breadthFirst(){
@@ -268,7 +345,7 @@ async function breadthFirst(){
 
                                 //Exit early
                                 frontier = [];
-                                return;
+                                return true;
                             }
 
                             //Mark the path
@@ -285,17 +362,22 @@ async function breadthFirst(){
 
     //While there are squares inside the frontier, continue looping
     while (frontier.length != 0){
-        addNeighbores();
+        let foundPath = addNeighbores();
+
+        //Finished executing
+        if (foundPath){
+            return true;
+        }
 
         //If speed is set to 10, instantly execute algorithm
-        if (slider.value != 10){
+        if (delay != 0){
             await sleep(delay);
         }
     }
 }
 
-//Greedy
-async function greedyHeuristic(){
+//Heuristic
+async function heuristic(){
 }
 
 //#endregion
@@ -326,6 +408,10 @@ function click(){
         goal = undefined;
     }
 
+    if (s.previousColor == wallColor){
+        walls.splice(walls.indexOf(s));
+    }
+
     //Set the current square to the currently selected square type
     s.color = currentColor;
     if (currentColor == startColor){
@@ -333,6 +419,10 @@ function click(){
     }
     else if (currentColor == goalColor){
         goal = s;
+    }
+
+    else if (currentColor == wallColor){
+        walls.push(s);
     }
 
     hoveredSquare = undefined;
@@ -393,6 +483,7 @@ document.addEventListener('mouseup', e => {
 //Key press
 document.addEventListener('keydown', e => {
 
+    //Variables for a nice representation
     let enter = e.which == 13;
     let digit1 = e.which == 49;
     let digit2 = e.which == 50;
@@ -400,11 +491,11 @@ document.addEventListener('keydown', e => {
     let digit4 = e.which == 52;
     let plus = e.which == 187;
     let minus = e.which == 189;
+    let W = e.which == 87;
 
     //Press enter
     if (enter){
-        clearGrid();
-        currentAlgorithm();
+        execute();
     }
 
     //Digits were pressed
@@ -446,6 +537,12 @@ document.addEventListener('keydown', e => {
     else if (minus){
         slider.value--;
         slider.dispatchEvent(sliderEvent);
+    }
+
+    // 'W' key to randomly place walls
+    else if (W){
+
+        randomWalls();
     }
 
 });
@@ -495,7 +592,7 @@ slider.addEventListener('slider', () => {
 
     //If the algorithm was running when the slider value has changed, run it again
     if (running){
-        currentAlgorithm();
+        execute();
     }
 });
 
