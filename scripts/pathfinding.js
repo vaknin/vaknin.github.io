@@ -11,31 +11,32 @@ let cy = canvas.getBoundingClientRect().y;
 //#region Global variables
 
 //Colors
-const startColor = 'blue';
-const wallColor = 'black';
-const goalColor = 'red';
-const pathColor = 'green';
-const visitedColor = 'pink';
+const startColor = 'rgb(0,0,255)';
+const wallColor = 'rgb(0,0,0)';
+const goalColor = 'rgb(255,0,0)';
+const pathColor = 'rgb(0,255,0)';
+const visitedColor = 'rgb(128,180,120)';
 
 //Variables
 let squareSize = 32;
+const mouseclickDelay = 3;
+let delay = 100;
+let mousedown = false;
+let slider = document.getElementById('slider_speed');
+
 let grid = [[]];
 let visited = [];
 let frontier = [];
+
 let start, goal;
 let gridHeight = canvas.height;
 let gridWidth = canvas.width;
-let mousedown = false;
 let interval;
 let currentColor = wallColor;
-let animationFrameHandler;
-let delay = 100;
 let currentAlgorithm = breadthFirst;
+let animationFrameHandler;
 let sleepHandler;
-const mouseclickDelay = 3;
-
-//Speed slider
-let slider = document.getElementById('slider_speed');
+let hoveredSquare;
 
 //Initialize grid
 while (gridHeight % squareSize != 0){
@@ -304,46 +305,37 @@ async function greedyHeuristic(){
 //Left-click delegate
 function click(){
 
-    let x = mouseX;
-    let y = mouseY;
-
-    for (let i = 0; i < rows; i++){
-        for (let j = 0; j < columns; j++){
-
-            let s = grid[i][j];
-            let correctX = x >= s.x && x <= s.x + squareSize;
-            let correctY = y >= s.y && y <= s.y + squareSize;
-    
-            //Change the pressed square's color
-            if (correctX && correctY){
-
-                //If placing a starting point, remove the existing one, if one exists
-                if ((start && currentColor == startColor) || (s.color == startColor)){
-                    if (start){
-                        start.color = undefined;
-                    }
-                    start = undefined;
-                }
-
-                //If placing a goal point, remove the existing one, if one exists
-                else if ((goal && currentColor == goalColor) || (s.color == goalColor)){
-                    if (goal){
-                        goal.color = undefined;
-                    }
-                    goal = undefined;
-                }
-
-                //Set the current square to the currently selected square type
-                s.color = currentColor;
-                if (currentColor == startColor){
-                    start = s;
-                }
-                else if (currentColor == goalColor){
-                    goal = s;
-                }
-            }
-        }
+    if (!hoveredSquare){
+        return;
     }
+    let s = hoveredSquare;
+
+    //If placing a starting point, remove the existing one, if one exists
+    if ((start && currentColor == startColor) || (s.previousColor == startColor)){
+        if (start){
+            start.color = undefined;
+        }
+        start = undefined;
+    }
+
+    //If placing a goal point, remove the existing one, if one exists
+    else if ((goal && currentColor == goalColor) || (s.previousColor == goalColor)){
+        if (goal){
+            goal.color = undefined;
+        }
+        goal = undefined;
+    }
+
+    //Set the current square to the currently selected square type
+    s.color = currentColor;
+    if (currentColor == startColor){
+        start = s;
+    }
+    else if (currentColor == goalColor){
+        goal = s;
+    }
+
+    hoveredSquare = undefined;
 
     //Clear the visited & path tiles
     clearGrid();
@@ -362,12 +354,21 @@ document.addEventListener('mousemove', e => {
             for (let j = 0; j < columns; j++){
     
                 let s = grid[i][j];
-                let correctX = x >= s.x && x <= s.x + squareSize;
-                let correctY = y >= s.y && y <= s.y + squareSize;
+                let correctX = mouseX >= s.x && mouseX <= s.x + squareSize;
+                let correctY = mouseY >= s.y && mouseY <= s.y + squareSize;
         
                 //Change the pressed square's color
                 if (correctX && correctY){
-    
+
+                    if (hoveredSquare){
+                        hoveredSquare.color = hoveredSquare.previousColor;
+                    }
+
+                    hoveredSquare = s;
+                    hoveredSquare.previousColor = s.color;
+
+                    s.color = currentColor;
+                    return;
                 }
             }
         }
@@ -392,40 +393,57 @@ document.addEventListener('mouseup', e => {
 //Key press
 document.addEventListener('keydown', e => {
 
+    let enter = e.which == 13;
+    let digit1 = e.which == 49;
+    let digit2 = e.which == 50;
+    let digit3 = e.which == 51;
+    let digit4 = e.which == 52;
+    let plus = e.which == 187;
+    let minus = e.which == 189;
+
     //Press enter
-    if (e.which == 13){
+    if (enter){
         clearGrid();
         currentAlgorithm();
     }
 
-    //1
-    else if (e.which == 49){
-        currentColor = wallColor;
-    }
+    //Digits were pressed
+    else if (digit1 || digit2 || digit3 || digit4){
 
-    //2
-    else if (e.which == 50){
-        currentColor = undefined;
-    }
+        //1 -> place wall
+        if (digit1){
+            currentColor = wallColor;
+        }
 
-    //3
-    else if (e.which == 51){
-        currentColor = startColor;
-    }
+        //2 -> remove
+        else if (digit2){
+            currentColor = undefined;
+        }
 
-    //4
-    else if (e.which == 52){
-        currentColor = goalColor;
+        //3 -> place start
+        else if (digit3){
+            currentColor = startColor;
+        }
+
+        //4 -> place goal
+        else if (digit4){
+            currentColor = goalColor;
+        }
+
+        //If there is a square hovered, change it's color
+        if (hoveredSquare){
+            hoveredSquare.color = currentColor;
+        }
     }
 
     // + key to increase speed
-    else if (e.which == 187){
+    else if (plus){
         slider.value++;
         slider.dispatchEvent(sliderEvent);
     }
 
     // - key to decrease speed
-    else if (e.which == 189){
+    else if (minus){
         slider.value--;
         slider.dispatchEvent(sliderEvent);
     }
