@@ -1,7 +1,7 @@
 //#region Canvas
 let canvas = document.getElementById('canvas');
-canvas.width = window.innerWidth * 0.8;
-canvas.height = window.innerHeight / 2;
+canvas.width = window.innerWidth * 0.85;
+canvas.height = window.innerHeight * 0.4;
 let ctx = canvas.getContext('2d');
 let cx = canvas.getBoundingClientRect().x;
 let cy = canvas.getBoundingClientRect().y;
@@ -20,9 +20,15 @@ const visitedColor = 'rgb(128,180,120)';
 //Variables
 let squareSize = 32;
 const mouseclickDelay = 3;
-let delay = 100;
 let mousedown = false;
-let slider = document.getElementById('slider_speed');
+
+//Sliders
+let speedSlider = document.getElementById('slider_speed');
+let delay = 100;
+let wallSlider = document.getElementById('slider_wall');
+let wallDensity = 0.25;
+let insideWallLoop;
+let reducedDensity;
 
 let grid = [[]];
 let visited = [];
@@ -178,13 +184,14 @@ function clearGrid(){
 //Randomly place walls in the grid
 async function randomWalls(){
 
-    let wallPercentage = 0.5;
     let count = 0;
 
     //If executing, return
     if (frontier.length != 0){
+        insideWallLoop = false;
         return;
     }
+
 
     //Keep looping until found a wall structure with a possible path
     while(true){
@@ -212,7 +219,7 @@ async function randomWalls(){
                 let rand = Math.random();
 
                 //chance to be a wall
-                if (rand > 1 - wallPercentage){
+                if (rand > 1 - wallDensity){
                     s.color = wallColor;
                     walls.push(s);
                 }
@@ -226,12 +233,18 @@ async function randomWalls(){
         if (await execute()){
             clearGrid();
             delay = delayHolder;
+            if (reducedDensity){
+                getDensity();
+                reducedDensity = false;
+            }
+            insideWallLoop = false;
             break;
         }
 
         if (count == 20){
             count = 0;
-            wallPercentage -= 0.01;
+            wallDensity -= 0.01;
+            reducedDensity = true;
         }
 
         delay = delayHolder;;
@@ -247,10 +260,21 @@ function main(){
 
 //#endregion
 
-//#region Algorithms
+//#region Searching algorithms
 
 //Execute the current algorithm
 async function execute(){
+
+    //Make sure not trying to run the algorithm without start and goal points
+    if (start == undefined || goal == undefined){
+        return;
+    }
+
+    //Remove the 'visited' tiles and the 'path' tiles
+    clearGrid();
+
+    //Add the 'start' square to the frontier
+    frontier.push(start);
 
     //If there's a square currently hovered, ignore it
     if (hoveredSquare){
@@ -258,110 +282,102 @@ async function execute(){
         hoveredSquare = undefined;
     }
 
-    let bool = await currentAlgorithm();
-    return bool;
+    let foundPath = await currentAlgorithm();
+    return foundPath;
 }
 
-//Breadth-first
-async function breadthFirst(){
+//Add the four square's neighbors
+function addNeighbores(){
 
-    clearGrid();
+    //Check the first square in the array (index 0)
+    let square = frontier[0];
+    
+    //Remove the current square from the frontier
+    frontier.splice(0, 1);
+    
+    //Scan for the four neighboring squares
+    for (let i = 0; i < 4; i++){
+        let x = square.rowIndex;
+        let y = square.columnIndex;
 
-    //Make sure not trying to run the algorithm without start and goal points
-    if (start == undefined || goal == undefined){
-        return;
-    }
+        //4 different scenarios
+        switch(i){
+            //X++
+            case 0:
+            x++;
+            break;
 
-    //Add the four square's neighbors
-    function addNeighbores(){
+            //X--
+            case 1:
+            x--;
+            break;
 
-        //Check the first square in the array (index 0)
-        let square = frontier[0];
-        
-        //Remove the current square from the frontier
-        frontier.splice(0, 1);
-        
-        //Scan for the four neighboring squares
-        for (let i = 0; i < 4; i++){
-            let x = square.rowIndex;
-            let y = square.columnIndex;
+            //Y++
+            case 2:
+            y++;
+            break;
 
-            //4 different scenarios
-            switch(i){
-                //X++
-                case 0:
-                x++;
-                break;
+            //Y--
+            case 3:
+            y--;
+            break;
+        }
 
-                //X--
-                case 1:
-                x--;
-                break;
+        //The neighboring square
+        if (grid[x] && grid[x][y]){
+            
+            let s = grid[x][y];
 
-                //Y++
-                case 2:
-                y++;
-                break;
+            //Check whether the square has already been visited and it's not a wall
+            if (!s.visited && s.color != wallColor){
 
-                //Y--
-                case 3:
-                y--;
-                break;
-            }
+                s.cameFrom = square;
+                s.visited = true;
+                visited.push(s);
 
-            //The neighboring square
-            if (grid[x] && grid[x][y]){
-                
-                let s = grid[x][y];
+                //Mark progress
+                if (s != start && s != goal){
+                    s.color = visitedColor;
+                }
 
-                //Check whether the square has already been visited and it's not a wall
-                if (!s.visited && s.color != wallColor){
+                //Add the neighbor to the frontier array
+                frontier.push(s);
 
-                    s.cameFrom = square;
-                    s.visited = true;
-                    visited.push(s);
+                //Reached the goal square, stop
+                if (s == goal){
 
-                    //Mark progress
-                    if (s != start && s != goal){
-                        s.color = visitedColor;
-                    }
+                    //Keep going back until reaching the start
+                    while(true){
 
-                    //Add the neighbor to the frontier array
-                    frontier.push(s);
+                        //The square it came from
+                        s = s.cameFrom;
 
-                    //Reached the goal square, stop
-                    if (s == goal){
+                        //Reached back to start point, break the 'while' loop and finish the algorithm
+                        if (s == start){
+                            goal.color = goalColor;
+                            start.color = startColor;
 
-                        //Keep going back until reaching the start
-                        while(true){
-
-                            //The square it came from
-                            s = s.cameFrom;
-
-                            //Reached back to start point, break the 'while' loop and finish the algorithm
-                            if (s == start){
-                                goal.color = goalColor;
-                                start.color = startColor;
-
-                                //Exit early
-                                frontier = [];
-                                return true;
-                            }
-
-                            //Mark the path
-                            s.color = pathColor;
+                            //Exit early
+                            frontier = [];
+                            return true;
                         }
+
+                        //Mark the path
+                        s.color = pathColor;
                     }
                 }
             }
         }
     }
+}
 
-    //Add the 'start' square to the frontier
-    frontier.push(start);
+//Breadth-first, the foundation algorithm
+async function breadthFirst(){
 
     //While there are squares inside the frontier, continue looping
     while (frontier.length != 0){
+
+        //Once the goal has been reached, return
         let foundPath = addNeighbores();
 
         //Finished executing
@@ -529,20 +545,24 @@ document.addEventListener('keydown', e => {
 
     // + key to increase speed
     else if (plus){
-        slider.value++;
-        slider.dispatchEvent(sliderEvent);
+        speedSlider.value++;
+        changeDelay();
     }
 
     // - key to decrease speed
     else if (minus){
-        slider.value--;
-        slider.dispatchEvent(sliderEvent);
+        speedSlider.value--;
+        changeDelay();
     }
 
     // 'W' key to randomly place walls
     else if (W){
 
-        randomWalls();
+        //If not already placing walls
+        if (!insideWallLoop){
+            insideWallLoop = true;
+            randomWalls();
+        }
     }
 
 });
@@ -570,30 +590,34 @@ window.addEventListener('resize', () => {
     grid = [];
     visited = [];
     frontier = [];
+    walls = [];
     createGrid();
     addStartAndGoal();
     draw();
 });
 
+//#region Wall density
+
+//Calculate wall density
+function getDensity(){
+    wallDensity = (wallSlider.value / 10) * 0.5;
+}
+
+//Wall density slider
+wallSlider.addEventListener('input', () => {
+    getDensity();
+});
+
+//#endregion
+
 //#region Speed slider
 
-//Change speed
-var sliderEvent = new Event('slider');
-slider.addEventListener('slider', () => {
-
-    //Reset the algorithm, if one is active
-    let running = false;
-    if (frontier.length > 0){
-        running = true;
-    }
-
-    //Change speed based on slider value
-    delay = 50 - slider.value * 5;
-
-    //If the algorithm was running when the slider value has changed, run it again
-    if (running){
-        execute();
-    }
+//Change Delay
+function changeDelay(){
+    delay = 50 - speedSlider.value * 5;
+}
+speedSlider.addEventListener('input', () => {
+changeDelay();
 });
 
 //#endregion

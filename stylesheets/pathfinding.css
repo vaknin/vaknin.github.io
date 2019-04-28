@@ -17,17 +17,30 @@ header{
     font-family: 'Monoton', cursive;
     letter-spacing: 0.3rem;
     font-weight: 100;
-    font-size: 8vw;
+    font-size: 7vw;
 }
 
 /* Options */
 
 .options_container{
     font-family: 'Roboto', sans-serif;
-    margin-top: 3.5rem;
+    margin-top: 2.5rem;
     position: relative;
     display: flex;
     justify-content: space-around;
+}
+
+.slider_container{
+    display: flex;
+    flex-direction: column;
+}
+
+.slider_container label{
+    text-align: center;
+}
+
+#slider_speed{
+    margin-bottom: 1rem;
 }
 
 .algorithms_container{
@@ -44,7 +57,7 @@ header{
 .canvas_container{
     position: relative;
     cursor: pointer;
-    margin-top: 1.5rem;
+    margin-top: 4.5rem;
     text-align: center;
 }
 
