@@ -147,20 +147,23 @@ function drawGrid(){
 //Add the goal
 function addStartAndGoal(){
 
-    //Add start point
-    for (let i = 0; i < rows; i++){
-        for (let j = 0; j < columns; j++){
+    //Generate random positions for 'start' and 'goal'
+    for (let i = 0; i < 2; i++){
+        let r = Math.round(Math.random() * (rows - 1));
+        let c = Math.round(Math.random() * (columns - 1));
 
-            let s = grid[i][j];
-            if (s.x - cx == 0 && s.y - cy == gridHeight - squareSize){
-                start = s;
-                start.color = startColor;
-            }
-    
-            else if (s.x - cx == gridWidth - squareSize && s.y - cy == 0){
-                goal = s;
-                goal.color = goalColor;
-            }
+        let s = grid[r][c];
+
+        //Set 'start'
+        if (i == 0){
+            s.color = startColor;
+            start = s;
+        }
+
+        //Set 'goal'
+        else{
+            s.color = goalColor;
+            goal = s;
         }
     }
 }
@@ -451,6 +454,7 @@ function click(){
     if (!hoveredSquare){
         return;
     }
+
     let s = hoveredSquare;
 
     //If placing a starting point, remove the existing one, if one exists
@@ -467,10 +471,6 @@ function click(){
             goal.color = undefined;
         }
         goal = undefined;
-    }
-
-    if (s.previousColor == wallColor){
-        walls.splice(walls.indexOf(s));
     }
 
     //Set the current square to the currently selected square type
@@ -553,7 +553,7 @@ document.addEventListener('keydown', e => {
     let plus = e.which == 187;
     let minus = e.which == 189;
     let W = e.which == 87;
-    let E = e.which == 67;
+    let C = e.which == 67;
 
     //console.log(e.which);
 
@@ -609,8 +609,8 @@ document.addEventListener('keydown', e => {
         randomWalls();
     }
 
-    // 'E' key to clear the grid
-    else if (E){
+    // 'C' key to clear the grid
+    else if (C){
         //Stop executing
         frontier = [];
 
@@ -653,7 +653,7 @@ window.addEventListener('resize', () => {
     walls = [];
     createGrid();
     addStartAndGoal();
-    randomWalls();
+    //randomWalls();
     draw();
 });
 
