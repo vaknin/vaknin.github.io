@@ -1,3 +1,5 @@
+//#region Global variables
+
 //#region Canvas
 let canvas = document.getElementById('canvas');
 let canvasW = window.innerWidth * 0.85; 
@@ -9,8 +11,6 @@ let cx = canvas.getBoundingClientRect().x;
 let cy = canvas.getBoundingClientRect().y;
 
 //#endregion
-
-//#region Global variables
 
 //Colors
 const startColor = 'rgb(0,0,255)';
@@ -37,11 +37,18 @@ let heuristicRadio = document.getElementById('radio_heuristic');
 let astarRadio = document.getElementById('radio_astar');
 let activeRadio = 'breadth';
 
+//Buttons
+let div_controls = document.getElementById('div_controls');
+let btn_openControls = document.getElementById('btn_openControls');
+let btn_closeControls = document.getElementById('btn_closeControls');
+
+//Arrays
 let grid = [[]];
 let visited = [];
 let frontier = [];
 let walls = [];
 
+//Variables
 let start, goal;
 let gridHeight = canvas.height;
 let gridWidth = canvas.width;
@@ -149,8 +156,18 @@ function addStartAndGoal(){
 
     //Generate random positions for 'start' and 'goal'
     for (let i = 0; i < 2; i++){
-        let r = Math.round(Math.random() * (rows - 1));
-        let c = Math.round(Math.random() * (columns - 1));
+
+        let r, c;
+
+        while(true){
+            r = Math.round(Math.random() * (rows - 1));
+            c = Math.round(Math.random() * (columns - 1));
+
+            //Make sure goal and start aren't the same point
+            if (i == 0 || grid[r][c] != start){
+                break;
+            }
+        }
 
         let s = grid[r][c];
 
@@ -233,7 +250,7 @@ async function randomWalls(){
             }
         }
 
-        //Execute to see if there is a path
+        //Execute faster to see if there is a path
         let delayHolder = delay;
         delay = 0;
 
@@ -271,7 +288,7 @@ function main(){
 
 //#endregion
 
-//#region Searching algorithms
+//#region Algorithms
 
 //Execute the current algorithm, returns a boolean that indicates whether a path has been found
 async function execute(){
@@ -554,8 +571,8 @@ document.addEventListener('keydown', e => {
     let minus = e.which == 189;
     let W = e.which == 87;
     let C = e.which == 67;
+    let Esc = e.which == 27;
 
-    //console.log(e.which);
 
     //Press enter
     if (enter){
@@ -624,6 +641,11 @@ document.addEventListener('keydown', e => {
         clearGrid();
     }
 
+    // Escape closes the controls
+    else if (Esc){
+        div_controls.style.display = 'none';
+    }
+
 });
 
 //Client resized the screen -> reset grid
@@ -653,11 +675,25 @@ window.addEventListener('resize', () => {
     walls = [];
     createGrid();
     addStartAndGoal();
-    //randomWalls();
+    randomWalls();
     draw();
 });
 
-//#region Algorithm radios
+//#region Controls
+
+//Show controls
+btn_openControls.addEventListener('click', () => {
+    div_controls.style.display = 'inline';
+});
+
+//Close controls
+btn_closeControls.addEventListener('click', () => {
+    div_controls.style.display = 'none';
+});
+
+//#endregion
+
+//#region Algorithm Radios
 
 function radioListener(radio, text){
     radio.addEventListener('change', () => {
@@ -671,7 +707,7 @@ radioListener(astarRadio, 'astar');
 
 //#endregion
 
-//#region Wall density
+//#region Wall Density
 
 //Calculate wall density
 function getDensity(){
@@ -685,7 +721,7 @@ wallSlider.addEventListener('input', () => {
 
 //#endregion
 
-//#region Speed slider
+//#region Speed
 
 //Change Delay
 function changeDelay(){
@@ -699,5 +735,4 @@ changeDelay();
 
 //#endregion
 
-//Main method
 main();

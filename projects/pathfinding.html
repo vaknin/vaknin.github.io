@@ -10,6 +10,19 @@
 <body oncontextmenu="return false">
     <h1>PATHFINDING</h1>
 
+    <div id="div_controls" class="controls">
+        <h2>Controls</h2>
+        <p>Enter - Execute algorithm</p>
+        <p>1 - Draw walls</p>
+        <p>2 - Remove</p>
+        <p>3 - Set starting point</p>
+        <p>4 - Set ending point</p>
+        <p>-/+ - Change algorithm speed</p>
+        <p>W - Randomly place walls</p>
+        <p>C - Clear grid</p>
+        <button id="btn_closeControls">Close</button>
+    </div>
+
     <div class="options_container">
         <div class="slider_container">
             <label for="slider_speed">Speed</label>
@@ -28,14 +41,16 @@
 
             <div id="heuristic_container">
                 <input type="radio" name="type" id="radio_heuristic">
-                <label for="radio_heuristic">Heuristic</label>
+                <label for="radio_heuristic">Best-first</label>
             </div>
 
             <div id="astar_container">
-                <input type="radio" name="type" id="radio_astar">
-                    <label for="radio_astar">A*</label>
+                <input type="radio" name="type" id="radio_astar" disabled="true">
+                <label for="radio_astar">A*</label>
             </div>
         </div>
+
+        <button id="btn_openControls">Controls</button>
     </div>
 
     <div class="canvas_container">
