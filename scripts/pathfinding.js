@@ -350,12 +350,13 @@ function visit(square){
 
         //Trace the way back from the goal square to the starting destination
         while(true){
-            
+
             //Once reached the starting point, break the loop and end the algorithm
             if (s == start){
                 
                 //End algorithm
                 frontier = [];
+
                 return true;
             }
             
@@ -468,6 +469,13 @@ function addNeighbors(square){
 //Left-click delegate
 function click(){
 
+    //Stop executing
+    if (frontier.length != 0){
+        frontier = [];
+        clearGrid();
+        return;
+    }
+
     if (!hoveredSquare){
         return;
     }
@@ -576,7 +584,17 @@ document.addEventListener('keydown', e => {
 
     //Press enter
     if (enter){
-        execute();
+
+        //Execute
+        if (frontier.length == 0){
+            execute();
+        }
+
+        //Already executing, stop
+        else{
+            frontier = [];
+            clearGrid();
+        }
     }
 
     //Digits were pressed
