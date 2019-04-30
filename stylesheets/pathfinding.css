@@ -41,6 +41,7 @@ h1{
     margin-left: auto;
     margin-right: auto;
     padding: 0.5rem;
+    overflow: auto;
 }
 
 /* Controls button */
@@ -82,8 +83,12 @@ h1{
     font-size: 1.75vw;
 }
 
-#breadth_container, #heuristic_container{
+#breadth_container, #best_container{
     margin-bottom: 0.5rem;
+}
+
+#astar_container{
+    display: none;
 }
 
 /* Options - END */
@@ -106,7 +111,6 @@ h1{
     text-align: center;
     font-size: 4vw;
     margin-top: 0;
-    margin-bottom: 2.5rem;
     top: 0;
     color: rgb(192, 192, 192);
 }

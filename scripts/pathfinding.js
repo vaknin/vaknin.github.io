@@ -33,7 +33,7 @@ let reducedDensity;
 
 //Radios
 let breadthRadio = document.getElementById('radio_breadth');
-let heuristicRadio = document.getElementById('radio_heuristic');
+let bestRadio = document.getElementById('radio_best');
 let astarRadio = document.getElementById('radio_astar');
 let activeRadio = 'breadth';
 
@@ -41,6 +41,7 @@ let activeRadio = 'breadth';
 let div_controls = document.getElementById('div_controls');
 let btn_openControls = document.getElementById('btn_openControls');
 let btn_closeControls = document.getElementById('btn_closeControls');
+let controlsDisplayed = false;
 
 //Arrays
 let grid = [[]];
@@ -298,6 +299,11 @@ async function execute(){
         return;
     }
 
+    //If currently in the controls screen, return
+    if (controlsDisplayed){
+        return;
+    }
+
     //If there's a square currently hovered, ignore it
     if (hoveredSquare){
         hoveredSquare.color = hoveredSquare.previousColor;
@@ -423,8 +429,8 @@ function addNeighbors(square){
         }
     }
 
-    //Heuristic algorithm
-    if (activeRadio == 'heuristic'){
+    //Best-first algorithm
+    if (activeRadio == 'best'){
 
         //If the frontier is empty, return, no path found
         if (frontier.length == 0){
@@ -519,6 +525,12 @@ function click(){
 
 //Mousemove
 document.addEventListener('mousemove', e => {
+
+    //If currently in the controls screen, return
+    if (controlsDisplayed){
+        return;
+    }
+
     mouseX = e.clientX;
     mouseY = e.clientY;
 
@@ -553,6 +565,12 @@ document.addEventListener('mousemove', e => {
 
 //Mouse down
 canvas.addEventListener('mousedown', e => {
+
+    //If currently in the controls screen, return
+    if (controlsDisplayed){
+        return;
+    }
+
     mouseX = e.clientX;
     mouseY = e.clientY;
     interval = setInterval(() => {
@@ -580,6 +598,9 @@ document.addEventListener('keydown', e => {
     let W = e.which == 87;
     let C = e.which == 67;
     let Esc = e.which == 27;
+    let F1 = e.which == 112;
+    let F2 = e.which == 113;
+    //let F3 = e.which == 114; reserver for a*
 
 
     //Press enter
@@ -641,11 +662,22 @@ document.addEventListener('keydown', e => {
     // 'W' key to randomly place walls
     else if (W){
 
+        //If currently in the controls screen, return
+        if (controlsDisplayed){
+            return;
+        }
+
         randomWalls();
     }
 
     // 'C' key to clear the grid
     else if (C){
+
+        //If currently in the controls screen, return
+        if (controlsDisplayed){
+            return;
+        }
+
         //Stop executing
         frontier = [];
 
@@ -662,6 +694,17 @@ document.addEventListener('keydown', e => {
     // Escape closes the controls
     else if (Esc){
         div_controls.style.display = 'none';
+        controlsDisplayed = false;
+    }
+
+    //F1 -> changes current algorithm to breadth-first
+    else if (F1){
+        breadthRadio.click();
+    }
+
+    //F2 -> changes current algorithm to best-first
+    else if (F2){
+        bestRadio.click();
     }
 
 });
@@ -702,11 +745,13 @@ window.addEventListener('resize', () => {
 //Show controls
 btn_openControls.addEventListener('click', () => {
     div_controls.style.display = 'inline';
+    controlsDisplayed = true;
 });
 
 //Close controls
 btn_closeControls.addEventListener('click', () => {
     div_controls.style.display = 'none';
+    controlsDisplayed = false;
 });
 
 //#endregion
@@ -719,7 +764,7 @@ function radioListener(radio, text){
     });
 }
 radioListener(breadthRadio, 'breadth');
-radioListener(heuristicRadio, 'heuristic');
+radioListener(bestRadio, 'best');
 radioListener(astarRadio, 'astar');
 
 
